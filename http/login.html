@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta charset='UTF-8'>
+		<title>ZDA Logger</title>
+        <link rel="shortcut icon" href="/favicon.ico" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+        <link rel="stylesheet" href="/css/login.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script src="/js/bshelp2.js"></script>
+        <script src="/js/login.js"></script>
+	</head>
+	<body>
+        <div class="panel panel-default vcenter centered">
+            <div class="panel-heading">
+                ZDA Logger Login
+            </div>
+            <div class="panel-body">
+                <div id="alertbox"></div>
+                Callsign: <input type="text" id="callsign"><br>
+                Operator: <input type="text" id="operator"><br>
+                Password: <input type="password" id="paswd"><br>
+                <button class="btn btn-info" onclick="btn_login();">Login</button>
+                <br>
+                <a href="/forgot">Forgot Password?</a>|<a href="/create">Create Account</a>
+            </div>
+        </div>
+
+        <div id="overlay" class="centered">
+            <div id="overlay-body" class="centered vcenter"></div>
+        </div>
+	</body>
+</html>

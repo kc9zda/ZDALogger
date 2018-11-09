@@ -1,0 +1,509 @@
+/** @type {string} QSO feed heading */
+var qfhead = ""; 
+/** @type {string} QSO feed body */
+var qfbody = "";
+/** @type {string} Current band */
+var current_band = "20m";
+/** @type {string} Current mode */
+var current_mode = "SSB";
+/** @type {string} Current filter */
+var current_filter = 0;
+/** @type {*} Websockets connection */
+var ws;
+/** @type {object[]} List of operators online */
+var online_ops = [];
+/** @type {string[]} List of supported bands */
+var bands = ["2200m","1750m","630m","160m","80m","60m","40m","30m","20m","17m","15m","12m","10m","6m","2m","1.25m","70cm","33cm","23cm","13cm","9cm","5cm","3cm","1.2cm","6mm","4mm","2.5mm","2mm","1mm"];
+/** @type {string[]} List of supported modes */
+var modes = ["CW","PHONE","IMAGE","DATA","AM","C4FM","DIGITALVOICE","DSTAR","FM","SSB","ATV","FAX","SSTV","AMTOR","ARDOP","CHIP","CLOVER","CONTESTI","DOMINO","FSK31","FSK441","FT8","GTOR","HELL","HFSK","ISCAT","JT4","JT65","JT6M","JT9","MFSK16","MFSK8","MINIRTTY","MSK144","MT63","OLIVIA","OPERA","PACKET","PAX","PSK10","PSK125","PSK2K","PSK31","PSK63","PSK63F","PSKAM","PSKFEC31","Q15","QRA64","ROS","RTTY","RTTYM","T10","THOR","THROB","VOI","WINMOR","WSPR"];
+/** @type {string[]} List of filter settings */
+var filters = ["Same operator, same callsign", "Same callsign only", "No filter"];
+/** @type {object} Settings */
+var settings = {
+    /** @type {number} Chat timezone */
+    chattz: 0
+};
+
+/** onload handler */
+function init() {
+    init_qso_feed();
+    init_qso_entry();
+    init_chat_box();
+    init_ws();
+}
+
+/** Initializes QSO feed */
+function init_qso_feed() {
+    qfhead = build_tblrow("th",["","FromCall", "FromOp", "Freq", "Mode", "Call", "Time", "Date", "Comment"]);
+    qfbody = "";
+    update_qso_feed();
+}
+
+/** Builds a table row
+ * @param {string} ct - cell type
+ * @param {string[]} dat - row data
+ * @return {string} row HTML
+ */
+function build_tblrow(ct, dat) {
+    var s = "";
+
+    s+="<tr>";
+    for (var i=0;i<dat.length;i++) {
+        s+="<"+ct+">"+dat[i]+"</"+ct+">";
+    }
+    s+="</tr>";
+    return s;
+}
+
+/** Updates QSO feed HTML */
+function update_qso_feed() {
+    si("logbox-head",qfhead);
+    si("logbox-body",qfbody);
+}
+
+/** Initializes QSO entry box */
+function init_qso_entry() {
+    set_band(current_band);
+    set_mode(current_mode);
+    setInterval(update_time_box,100);
+}
+
+/** Sets current band and updates to server
+ * @param {string} f - band
+ */
+function set_band(f) {
+    current_band = f;
+    si("entryboxband",f);
+    send_band_mode();
+}
+
+/** Sets current mode and updates to server
+ * @param {string} m - mode
+ */
+function set_mode(m) {
+    current_mode = m;
+    si("entryboxmode",m);
+    send_band_mode();
+}
+
+/** Initializes chat box */
+function init_chat_box() {
+    si("chatbox-scroller","");
+    chat_add_line("Page loaded");
+}
+
+/** Adds line to chat
+ * @param {string} l - chat text
+ */
+function chat_add_line(l) {
+    var c = gc("chatbox-scroller");
+
+    l=chat_timestring(Date.now())+" "+l;
+    si("chatbox-scroller",l+"<br>"+c);
+}
+
+/** Gets time string for chat message
+ * @param {Date} t - Time for string
+ * @return {string} Time string
+ */
+function chat_timestring(t) {
+    var d = new Date(t);
+
+    if (settings.chattz == 1) {
+        return "["+lts(d)+"]";
+    } else {
+        return "["+uts(d)+"]";
+    }
+}
+
+/** Initializes Websockets connection */
+function init_ws() {
+    ws = new WebSocket(get_ws_url("/ws"));
+
+    ws.onopen=ws_onopen;
+    ws.onmessage=ws_onmessage;
+    ws.onclose=ws_onclose;
+    ws.onerror=ws_onerror;
+}
+
+/** Generates WebSockets URL 
+ * @param {string} path - Websockets path
+ * @return {string} Websockets URL
+ */
+function get_ws_url(path) {
+    var proto, host, port;
+
+    proto = ((window.location.protocol.indexOf("https")>0)?"wss://":"ws://");
+    host = window.location.hostname;
+    port = ":" + window.location.port;
+    return proto + host + port + path;
+}
+
+/** onopen handler for Websockets */
+function ws_onopen() {
+    var o = {};
+
+    chat_add_line("WebSocket connection established");
+    o.cmd = "join";
+    o.logtype = "normal";
+    o.isStatus = false;
+    o.session = get_session();
+    ws_send_message(o);
+    send_band_mode();
+    hide_overlay();
+}
+
+/** onmessage handler for Websockets
+ * @param {string} m - JSON message string
+ */
+function ws_onmessage(m) {
+    var o = JSON.parse(m.data);
+
+    //console.log(m);
+    chat_add_line("WebSocket message: "+o.cmd);
+    switch(o.cmd) {
+        case "feed":
+            add_to_feed(o);
+            break;
+        case "log":
+            init_log(o);
+            break;
+        case "chat":
+            chat_add_line(o.message);
+            break;
+        case "online":
+            update_users_online(o.online);
+            break;
+        case "redir":
+            redir(o.redir);
+            break;
+        default:
+            console.log("unknown message from server: "+o.cmd);
+            break;
+    }
+}
+
+/** onclose handler for Websockets */
+function ws_onclose() {
+    chat_add_line("WebSocket connection lost");
+    set_overlay(create_panel("","Reconnecting...","reconn",{extra_classes: "vcenter centered", no_header: true}));
+    show_overlay();
+    setTimeout(init,2000);
+}
+
+/** onerror handler for Websockets */
+function ws_onerror() {
+    chat_add_line("WebSocket error");
+}
+
+/** Gets session string
+ * @return {string} Session ID
+ */
+function get_session() {
+    return get_param('session') || "DEFAULT";
+}
+
+/** Sends message object as JSON to server
+ * @param {object} obj - Message
+ * @param {string} obj.cmd - Command
+ */
+function ws_send_message(obj) {
+    if (ws==undefined) return; // for you, firefox
+    ws.send(JSON.stringify(obj));
+}
+
+/** Sends band and mode to server */
+function send_band_mode() {
+    var o = {};
+
+    o.cmd = "mode";
+    o.band = current_band;
+    o.mode = current_mode;
+    o.session = get_session();
+    ws_send_message(o);
+}
+
+/** onclick handler for log button */
+function btn_log()  {
+    var o = {};
+
+    o.cmd = "qso";
+    o.timestamp = Date.now();
+    o.callsign = gv("qsocall").toUpperCase();
+    o.comment = gv("qsocomment");
+    o.session = get_session();
+    ws_send_message(o);
+    sv("qsocall","");
+    sv("qsocomment","");
+    fe("qsocall");
+}
+
+/** escapes unsafe HTML characters from string
+ * @param {string} unsafe - Input string
+ * @return Output string
+ */
+function escapeHTML(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+/** Adds QSO to feed
+ * @param {object} qso - QSO to add
+ */
+function add_to_feed(qso) {
+    var d = new Date(qso.timestamp);
+    var time = uts(d);
+    var date = uds(d);
+    var s;
+
+    s = build_tblrow("td",[(qso.mine?"<a href=\"javascript:void(0);\" onclick=\"btn_delqso("+qso.id+")\">X</a>":""),qso.fmcallsign, qso.fmoperator, qso.band, qso.mode, qso.dxcallsign, time, date, qso.comment]);
+    qfbody = s + qfbody;
+    update_qso_feed();
+}
+
+/** Initializes QSO feed
+ * @param {object} obj
+ * @param {object[]} obj.log
+ */
+function init_log(obj) {
+    qfbody = "";
+    for (var i=0;i<obj.log.length;i++) {
+        obj.log[i].mine = true;
+        add_to_feed(obj.log[i]);
+    }
+    update_qso_feed();
+}
+
+/** onclick handler for chat send button */
+function btn_chatsend() {
+    var obj = {};
+
+    obj.cmd = "chat";
+    obj.message = escapeHTML(gv("chatboxtext"));
+    obj.session = get_session();
+    ws_send_message(obj);
+    sv("chatboxtext","");
+}
+
+/** onclick handler for operators online button */
+function btn_opsonline() {
+    var cont = "<table class=\"table\">";
+
+    cont+="<thead>";
+    cont+=build_tblrow("th",["Operator","Band","Mode"]);
+    cont+="</thead><tbody>";
+    for (var i=0;i<online_ops.length;i++) {
+        cont+=build_tblrow("td",[online_ops[i].operator, online_ops[i].band, online_ops[i].mode]);
+    }
+    cont+="</tbody></table>";
+    cont+="<br><button class=\"btn btn-info\" onclick=\"btn_opsonline_close();\">Close</button>";
+    set_overlay(create_panel("Operators online", cont, "olpan", {extra_classes: "vcenter centered"}));
+    show_overlay();
+}
+
+/** onclick handler for operators online close button */
+function btn_opsonline_close() {
+    hide_overlay();
+}
+
+/** updates online operators list
+ * @param {object[]} o
+ */
+function update_users_online(o) {
+    var s = "";
+
+    online_ops = o;
+    if (online_ops.length == 1) {
+        s = "1 operator online";
+    } else {
+        s = online_ops.length+" operators online";
+    }
+    si("opsonline",s);
+}
+
+/** onclick handler for band button */
+function btn_band() {
+    var cont = "";
+
+    for (var i=0;i<bands.length;i++) {
+        if (bands[i] == current_band) {
+            cont+="<button class=\"btn btn-success\" onclick=\"btn_band_set("+i+");\">"+bands[i]+"</button>&nbsp;";
+        } else {
+            cont+="<button class=\"btn btn-default\" onclick=\"btn_band_set("+i+");\">"+bands[i]+"</button>&nbsp;";
+        }
+    }
+    cont+="<hr><button class=\"btn btn-info\" onclick=\"btn_band_close();\">Close</button>";
+    set_overlay(create_panel("Select Band", cont, "selband", {extra_classes: "vcenter centered"}));
+    show_overlay();
+}
+
+/** onclick handler for band close button */
+function btn_band_close() {
+    hide_overlay();
+}
+
+/** onclick handler for band set button
+ * @param {number} i - Band index
+ */
+function btn_band_set(i) {
+    set_band(bands[i]);
+    btn_band();
+}
+
+/** onclick handler for mode button */
+function btn_mode() {
+    var cont = "";
+
+    for (var i=0;i<modes.length;i++) {
+        if (modes[i] == current_mode) {
+            cont+="<button class=\"btn btn-success\" onclick=\"btn_mode_set("+i+");\">"+modes[i]+"</button>&nbsp;";
+        } else {
+            cont+="<button class=\"btn btn-default\" onclick=\"btn_mode_set("+i+");\">"+modes[i]+"</button>&nbsp;";
+        }
+    }
+    cont+="<hr><button class=\"btn btn-info\" onclick=\"btn_mode_close();\">Close</button>";
+    set_overlay(create_panel("Select Mode", cont, "selmode", {extra_classes: "vcenter centered"}));
+    show_overlay();
+}
+
+/** onclick handler for mode close button */
+function btn_mode_close() {
+    hide_overlay();
+}
+
+/** onclick handler for mode set button
+ * @param {number} i - mode index
+ */
+function btn_mode_set(i) {
+    set_mode(modes[i]);
+    btn_mode();
+}
+
+/** updates time display in QSO entry box */
+function update_time_box() {
+    var d = new Date();
+    //var u = "UTC: "+d.getUTCHours()+":"+d.getUTCMinutes()+":"+d.getUTCSeconds();
+    var u = "UTC: "+uts(d);
+    //var l = "Local: "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+    var l = "Local: "+lts(d);
+
+    si("timebox",u+" / "+l);
+}
+
+/** onclick handler for settings button */
+function btn_settings() {
+    var cont = "";
+
+    cont = "Chat time zone: <select id=\"settings_chattz\"><option>UTC</option><option>Local</option></select>";
+    cont+= "<hr><button class=\"btn btn-info\" onclick=\"btn_settings_close();\">Close</button>";
+    set_overlay(create_panel("Settings", cont, "settings", {extra_classes: "vcenter centered"}));
+    ge("settings_chattz").selectedIndex = settings.chattz;
+    show_overlay();
+}
+
+/** onclick handler for settings close button */
+function btn_settings_close() {
+    settings.chattz = ge("settings_chattz").selectedIndex;
+    hide_overlay();
+}
+
+/** Gets UTC time string
+ * @param {Date} d - Time
+ * @return {string} UTC time string
+ */
+function uts(d) {
+    var h = ("0"+d.getUTCHours()).slice(-2);
+    var m = ("0"+d.getUTCMinutes()).slice(-2);
+    var s = ("0"+d.getUTCSeconds()).slice(-2);
+
+    return h+":"+m+":"+s;
+}
+
+/** Gets local time string
+ * @param {Date} d - Time
+ * @return {string} local time string
+ */
+function lts(d) {
+    var h = ("0"+d.getHours()).slice(-2);
+    var m = ("0"+d.getMinutes()).slice(-2);
+    var s = ("0"+d.getSeconds()).slice(-2);
+
+    return h+":"+m+":"+s;
+}
+
+/** Gets UTC date string
+ * @param {Date} d - Date
+ * @return {string} UTC date string
+ */
+function uds(d) {
+    var m = ("0"+(d.getUTCMonth()+1)).slice(-2);
+    var d2 = ("0"+d.getUTCDate()).slice(-2);
+    var y = d.getUTCFullYear();
+
+    return m+"/"+d2+"/"+y;
+}
+
+/** Gets a URL parameter
+ * @param {string} name - Parameter name
+ * @return {string} Parameter value
+ */
+function get_param(name) {
+    if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+        return decodeURIComponent(name[1]);
+}
+
+/** onclick handler for delete QSO button
+ * @param {number} id - QSO id
+ */
+function btn_delqso(id) {
+    var o = {};
+
+    o.cmd = "delete";
+    o.id = id;
+    ws_send_message(o);
+}
+
+/** onclick handler for filters button */
+function btn_filters() {
+    var cont = "";
+
+    for (var i=0;i<filters.length;i++) {
+        if (i == current_filter) {
+            cont+="<button class=\"btn btn-success\" onclick=\"btn_filter_set("+i+");\">"+filters[i]+"</button>&nbsp;";
+        } else {
+            cont+="<button class=\"btn btn-default\" onclick=\"btn_filter_set("+i+");\">"+filters[i]+"</button>&nbsp;";
+        }
+    }
+    cont+="<hr><button class=\"btn btn-info\" onclick=\"btn_filter_close();\">Close</button>";
+    set_overlay(create_panel("Select Filter", cont, "selfilt", {extra_classes: "vcenter centered"}));
+    show_overlay();
+}
+
+/** onclick handler for filter set button
+ * @param {number} i - Filter index
+ */
+function btn_filter_set(i) {
+    set_filter(i);
+    btn_filters();
+}
+
+/** Sets current filter and sends to server
+ * @param {number} i - Filter index
+ */
+function set_filter(i) {
+    var o = {};
+
+    current_filter = i;
+    o.cmd = "filter";
+    o.filter = i;
+    ws_send_message(o);
+}
+
+/** onclick handler for filter close button */
+function btn_filter_close() {
+    hide_overlay();
+}

@@ -1,0 +1,15 @@
+{
+  "name": "zdalogger",
+  "version": "0.0.1",
+  "description": "Web app for Amateur Radio operators to log contacts",
+  "main": "index.js",
+  "dependencies": {
+    "ws": "^6.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Joseph Havens, KC9ZDA",
+  "license": "MIT"
+}
