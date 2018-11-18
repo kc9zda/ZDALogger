@@ -26,6 +26,7 @@ var settings = {
 
 /** onload handler */
 function init() {
+    init_cty_dat();
     init_qso_feed();
     init_qso_entry();
     init_chat_box();
@@ -511,4 +512,33 @@ function set_filter(i) {
 /** onclick handler for filter close button */
 function btn_filter_close() {
     hide_overlay();
+}
+
+/** onchange handler for the QSO callsign */
+function onchange_qsocall() {
+    var cs = gv("qsocall").toUpperCase();
+    var s = "";
+
+    if (cs=="") {
+        si("country","");
+        return;
+    }
+    var o = CtyDat.decodeCallsign(cs);
+    if (o) {
+        s = "Country: <b>"+o.name+"</b><br>";
+        s+= "CQ: <b>"+o.cq+"</b>&nbsp;ITU: <b>"+o.itu+"</b>";
+    } else {
+        s = "";
+    }
+    si("country",s);
+}
+
+/** initializes CtyDat database */
+function init_cty_dat() {
+    CtyDat.loadFromURL(gfu("/cty.dat"),onctyload);
+}
+
+/** onload callback for cty.dat */
+function onctyload() {
+    console.log("cty.dat loaded");
 }

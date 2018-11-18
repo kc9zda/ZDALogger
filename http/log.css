@@ -53,6 +53,10 @@ html, body {
     max-width: 50%;
 }
 
+#country {
+    display: inline;
+}
+
 .qsoln {
     margin-bottom: 8px;
 }

@@ -98,11 +98,19 @@ function create_panel(h,c,i,o) {
  * @param {string} p - Path to redirect to
  */
 function redir(p) {
+    window.location.href = gfu(p);
+}
+
+/** Returns full HTTP path for a given path
+ * @param {string} p - Path
+ * @returns {string} Full HTTP URL
+ */
+function gfu(p) {
     var s="";
 
     s+=window.location.protocol;
     s+="//";
     s+=window.location.host;
     s+=p;
-    window.location.href = s;
+    return s;
 }

@@ -11,6 +11,7 @@
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 		<script src="/js/bshelp2.js"></script>
 		<script src="/js/log.js"></script>
+		<script src="/js/ctydat.js"></script>
 	</head>
 	<body onload="init();">
 		<nav class="navbar navbar-default">
@@ -60,7 +61,7 @@
 			</div>
 			<div class="panel-body">
 				<div class="qsoln">
-					Call: <input type="text" id="qsocall" autofocus>
+					Call: <input type="text" id="qsocall" autofocus onkeyup="onchange_qsocall();">
 					Comment: <input type="text" id="qsocomment">
 					<button class="btn btn-info" onclick="btn_log();">Log</button>
 				</div>
@@ -70,6 +71,9 @@
 						<button type="button" class="btn btn-default" onclick="btn_mode();" id="entryboxmode">Mode</button>
 					</div>
 					<button type="button" style="float: right;" class="btn btn-default" onclick="btn_stainfo();">Station Info</button>
+					<hr>
+					<div id="country">
+					</div>
 				</div>
 			</div>
 		</div>
