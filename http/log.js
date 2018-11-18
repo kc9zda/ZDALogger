@@ -281,9 +281,14 @@ function init_log(obj) {
 /** onclick handler for chat send button */
 function btn_chatsend() {
     var obj = {};
+    var msg = escapeHTML(gv("chatboxtext"));
 
+    if (msg=="") {
+        sv("chatboxtext","");
+        return;
+    }
     obj.cmd = "chat";
-    obj.message = escapeHTML(gv("chatboxtext"));
+    obj.message = msg;
     obj.session = get_session();
     ws_send_message(obj);
     sv("chatboxtext","");
