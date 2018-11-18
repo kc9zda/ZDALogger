@@ -187,7 +187,8 @@ Authenticator.prototype.operatorOnline = function(cs,op) {
  * @param {string} ses - Session ID of the session that disconnected
  */
 Authenticator.prototype.disconnect = function(ses) {
-    this.getSession(ses).disconnect();
+    var s = this.getSession(ses);
+    if (s) s.disconnect();
 }
 
 /** Marks session as reconnected and cancels the logout timeout
