@@ -21,7 +21,9 @@ var filters = ["Same operator, same callsign", "Same callsign only", "No filter"
 /** @type {object} Settings */
 var settings = {
     /** @type {number} Chat timezone */
-    chattz: 0
+    chattz: 0,
+    /** @type {number} Distance units */
+    distunit: 0
 };
 /** @type {object} Station info */
 var stainfo = {
@@ -415,10 +417,12 @@ function update_time_box() {
 function btn_settings() {
     var cont = "";
 
-    cont = "Chat time zone: <select id=\"settings_chattz\"><option>UTC</option><option>Local</option></select>";
+    cont = "Chat time zone: <select id=\"settings_chattz\"><option>UTC</option><option>Local</option></select><br>";
+    cont+= "Distance units: <select id=\"settings_distunit\"><option>Kilometers</option><option>Miles</option></select>";
     cont+= "<hr><button class=\"btn btn-info\" onclick=\"btn_settings_close();\">Close</button>";
     set_overlay(create_panel("Settings", cont, "settings", {extra_classes: "vcenter centered"}));
     ge("settings_chattz").selectedIndex = settings.chattz;
+    ge("settings_distunit").selectedIndex = settings.distunit;
     show_overlay();
 }
 
@@ -427,6 +431,7 @@ function btn_settings_close() {
     var o = {};
 
     settings.chattz = ge("settings_chattz").selectedIndex;
+    settings.distunit = ge("settings_distunit").selectedIndex;
     hide_overlay();
     o.cmd = "settings";
     o.settings = settings;
@@ -599,6 +604,14 @@ function stainfo_grid_change() {
  */
 function encode_distance(mtrs) {
     var km = mtrs/1000;
+    var mi = km/1.609;
 
-    return km.toFixed(4)+" km";
+    switch(settings.distunit) {
+        case 0: 
+            return km.toFixed(4)+" km";
+        case 1:
+            return mi.toFixed(2)+" mi";
+        default:
+            return mtrs+" m";
+    }
 }
