@@ -541,8 +541,11 @@ function onchange_qsocall() {
     }
     var o = CtyDat.decodeCallsign(cs);
     if (o) {
+        r = GridSquare.distance(stainfo.grid,o.latitude,o.longitude);
         s = "Country: <b>"+o.name+"</b><br>";
-        s+= "CQ: <b>"+o.cq+"</b>&nbsp;ITU: <b>"+o.itu+"</b>";
+        s+= "CQ: <b>"+o.cq+"</b>&nbsp;ITU: <b>"+o.itu+"</b><br>";
+        s+= "Lat: <b>"+o.latitude+"</b>&nbsp;Lon: <b>"+o.longitude+"</b><br>";
+        s+= "Vec: <b>"+r.angle.toFixed(2)+"</b>&deg;&nbsp;<b>"+encode_distance(r.distance)+"</b>";
     } else {
         s = "";
     }
@@ -563,10 +566,12 @@ function onctyload() {
 function btn_stainfo() {
     var cont = "";
 
-    cont+="Gridsquare: <input type=\"text\" id=\"stainfo_grid\">";
+    cont+="Gridsquare: <input type=\"text\" id=\"stainfo_grid\" onchange=\"stainfo_grid_change();\"><br>";
+    cont+="<span id=\"stainfo_loc\"></span><br>";
     cont+="<hr><button class=\"btn btn-info\" onclick=\"btn_stainfo_close();\">Close</button>";
     set_overlay(create_panel("Station Information", cont, "stainfo", {extra_classes: "vcenter centered"}));
     sv("stainfo_grid",stainfo.grid);
+    stainfo_grid_change();
     show_overlay();
 }
 
@@ -579,4 +584,21 @@ function btn_stainfo_close() {
     o.cmd = "stainfo";
     o.stainfo = stainfo;
     ws_send_message(o);
+}
+
+/** onchange handler for station info grid square */
+function stainfo_grid_change() {
+    var coord = GridSquare.decode(gv("stainfo_grid"));
+
+    si("stainfo_loc","Lat: <b>"+coord.lat+"</b> Lon: <b>"+coord.lon+"</b>");
+}
+
+/** encodes distance with proper units
+ * @param {number} mtrs - Distance in meters
+ * @return {string} Distance string
+ */
+function encode_distance(mtrs) {
+    var km = mtrs/1000;
+
+    return km.toFixed(4)+" km";
 }

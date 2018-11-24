@@ -33,6 +33,7 @@ function HTTPServer(conf) {
 	this.localEPs.push(["/js/forgot.js","http/forgot.js","text/javascript"]);
 	this.localEPs.push(["/js/create.js","http/create.js","text/javascript"]);
 	this.localEPs.push(["/js/ctydat.js","http/ctydecode/ctydat.js","text/javascript"]);
+	this.localEPs.push(["/js/gridsquare.js","http/gridsquare.js","text/javascript"]);
 
 	this.localEPs.push(["/favicon.ico","http/radio_log.png","image/png"]);
 	this.localEPs.push(["/img/bt.png","http/bt.png","image/png"]);
