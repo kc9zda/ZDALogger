@@ -76,8 +76,8 @@ WSConnection.prototype.join = function(obj) {
         return;
     }
     Global.authenticator.connect(obj.session);
-    this.sendLog(this.session);
     this.sendSettings(this.session);
+    this.sendLog(this.session);
     this.callsign = Global.authenticator.getSession(this.session).callsign;
     this.operator = Global.authenticator.getSession(this.session).operator;
     this.manager.updateOnline(this.callsign);
