@@ -83,7 +83,7 @@ CtyDat.decodeCallsign = function(cs) {
             max = a[i].prefix.length;
         }
     }
-    a[idx].longitude*=-1; // database has longitude in wrong sign
+    if (a[idx]) a[idx].longitude*=-1; // database has longitude in wrong sign
     return a[idx];
 };
 
