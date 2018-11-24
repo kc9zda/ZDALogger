@@ -23,6 +23,11 @@ var settings = {
     /** @type {number} Chat timezone */
     chattz: 0
 };
+/** @type {object} Station info */
+var stainfo = {
+    /** @type {string} Grid square */
+    grid: ""
+};
 
 /** onload handler */
 function init() {
@@ -541,4 +546,21 @@ function init_cty_dat() {
 /** onload callback for cty.dat */
 function onctyload() {
     console.log("cty.dat loaded");
+}
+
+/** onclick callback for station info button */
+function btn_stainfo() {
+    var cont = "";
+
+    cont+="Gridsquare: <input type=\"text\" id=\"stainfo_grid\">";
+    cont+="<hr><button class=\"btn btn-info\" onclick=\"btn_stainfo_close();\">Close</button>";
+    set_overlay(create_panel("Station Information", cont, "stainfo", {extra_classes: "vcenter centered"}));
+    sv("stainfo_grid",stainfo.grid);
+    show_overlay();
+}
+
+/** onclick callback for station info close button */
+function btn_stainfo_close() {
+    stainfo.grid = gv("stainfo_grid");
+    hide_overlay();
 }
