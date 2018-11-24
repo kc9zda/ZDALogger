@@ -270,10 +270,19 @@ function escapeHTML(unsafe) {
  */
 function add_to_feed(qso) {
     var d = new Date(qso.timestamp);
-    var time = uts(d);
-    var date = uds(d);
-    var s;
+    var s,date,time;
 
+    switch(settings.logtz) {
+        case 1:
+            time = lts(d);
+            date = lds(d);
+            break;
+        case 0:
+        default:
+            time = uts(d);
+            date = uds(d);
+            break;
+    }
     s = build_tblrow("td",[(qso.mine?"<a href=\"javascript:void(0);\" onclick=\"btn_delqso("+qso.id+")\">X</a>":""),qso.fmcallsign, qso.fmoperator, qso.band, qso.mode, qso.dxcallsign, time, date, qso.comment]);
     qfbody = s + qfbody;
     update_qso_feed();
@@ -418,11 +427,13 @@ function btn_settings() {
     var cont = "";
 
     cont = "Chat time zone: <select id=\"settings_chattz\"><option>UTC</option><option>Local</option></select><br>";
+    cont+= "Log time zone: <select id=\"settings_logtz\"><option>UTC</option><option>Local</option></select><br>";
     cont+= "Distance units: <select id=\"settings_distunit\"><option>Kilometers</option><option>Miles</option></select>";
     cont+= "<hr><button class=\"btn btn-info\" onclick=\"btn_settings_close();\">Close</button>";
     set_overlay(create_panel("Settings", cont, "settings", {extra_classes: "vcenter centered"}));
     ge("settings_chattz").selectedIndex = settings.chattz;
     ge("settings_distunit").selectedIndex = settings.distunit;
+    ge("settings_logtz").selectedIndex = settings.logtz;
     show_overlay();
 }
 
@@ -432,6 +443,7 @@ function btn_settings_close() {
 
     settings.chattz = ge("settings_chattz").selectedIndex;
     settings.distunit = ge("settings_distunit").selectedIndex;
+    settings.logtz = ge("settings_logtz").selectedIndex;
     hide_overlay();
     o.cmd = "settings";
     o.settings = settings;
@@ -470,6 +482,18 @@ function uds(d) {
     var m = ("0"+(d.getUTCMonth()+1)).slice(-2);
     var d2 = ("0"+d.getUTCDate()).slice(-2);
     var y = d.getUTCFullYear();
+
+    return m+"/"+d2+"/"+y;
+}
+
+/** Gets UTC date string
+ * @param {Date} d - Date
+ * @return {string} UTC date string
+ */
+function lds(d) {
+    var m = ("0"+(d.getMonth()+1)).slice(-2);
+    var d2 = ("0"+d.getDate()).slice(-2);
+    var y = d.getFullYear();
 
     return m+"/"+d2+"/"+y;
 }
