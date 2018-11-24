@@ -22,7 +22,11 @@ var Global = {
 
     /** @typedef {import("./LoggingEngine")} LoggingEngine 
      *  @type {LoggingEngine} */
-    logger: undefined
+    logger: undefined,
+
+    /** @typedef {import("./SettingsManager")} SettingsManager
+     *  @type {SettingsManager} */
+    settingsManager: undefined
 };
 
 module.exports = Global;

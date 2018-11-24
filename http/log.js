@@ -183,6 +183,12 @@ function ws_onmessage(m) {
         case "redir":
             redir(o.redir);
             break;
+        case "settings":
+            settings = o.settings;
+            break;
+        case "stainfo":
+            stainfo = o.stainfo;
+            break;
         default:
             console.log("unknown message from server: "+o.cmd);
             break;
@@ -418,8 +424,13 @@ function btn_settings() {
 
 /** onclick handler for settings close button */
 function btn_settings_close() {
+    var o = {};
+
     settings.chattz = ge("settings_chattz").selectedIndex;
     hide_overlay();
+    o.cmd = "settings";
+    o.settings = settings;
+    ws_send_message(o);
 }
 
 /** Gets UTC time string
@@ -561,6 +572,11 @@ function btn_stainfo() {
 
 /** onclick callback for station info close button */
 function btn_stainfo_close() {
+    var o = {};
+
     stainfo.grid = gv("stainfo_grid");
     hide_overlay();
+    o.cmd = "stainfo";
+    o.stainfo = stainfo;
+    ws_send_message(o);
 }

@@ -48,6 +48,12 @@ WSConnection.prototype.onmessage = function(msg) {
         case "filter":
             this.filter(o);
             break;
+        case "stainfo":
+            this.msg_stainfo(o);
+            break;
+        case "settings":
+            this.msg_settings(o);
+            break;
         default:
             console.log("unknown ws cmd: "+o.cmd);
             break;
@@ -71,6 +77,7 @@ WSConnection.prototype.join = function(obj) {
     }
     Global.authenticator.connect(obj.session);
     this.sendLog(this.session);
+    this.sendSettings(this.session);
     this.callsign = Global.authenticator.getSession(this.session).callsign;
     this.operator = Global.authenticator.getSession(this.session).operator;
     this.manager.updateOnline(this.callsign);
@@ -213,6 +220,40 @@ WSConnection.prototype.checkFilter = function(cs,op) {
         default:
             return true;
     }
+}
+
+/** Handles new Station Info
+ * @param {object} obj - Receieved message
+ */
+WSConnection.prototype.msg_stainfo = function(obj) {
+    this.stainfo = obj.stainfo;
+    Global.settingsManager.updateStaInfo(this.session,this.stainfo);
+}
+
+/** Handles new settings 
+ * @param {object} obj - Received message
+ */
+WSConnection.prototype.msg_settings = function(obj) {
+    this.settings = obj.settings;
+    Global.settingsManager.updateSettings(this.session,this.settings);
+}
+
+/** Sends saved settings and station info to newly joined client
+ * @param {string} ses - Session id
+ */
+WSConnection.prototype.sendSettings = function(ses) {
+    var set = Global.settingsManager.getSettingsForSession(ses);
+    var sa = Global.settingsManager.getStaInfoForSession(ses);
+
+    var o = {};
+    o.cmd = "settings";
+    o.settings = set;
+    this.send_message(o);
+
+    o = {};
+    o.cmd = "stainfo";
+    o.stainfo = sa;
+    this.send_message(o);
 }
 
 module.exports = WSConnection;
