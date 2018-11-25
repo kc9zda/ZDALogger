@@ -202,6 +202,7 @@ Authenticator.prototype.connect = function(ses) {
  * @param {string} ses - Session ID to log out
  */
 Authenticator.prototype.logoutSession = function(ses) {
+    if (this.sessions[ses] && this.sessions[ses].waitReconnect) clearTimeout(this.sessions[ses].reconnectTimeout);
     delete this.sessions[ses];
 }
 

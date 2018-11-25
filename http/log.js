@@ -37,11 +37,17 @@ var stainfo = {
 
 /** onload handler */
 function init() {
+    init_logout_link();
     init_cty_dat();
     init_qso_feed();
     init_qso_entry();
     init_chat_box();
     init_ws();
+}
+
+/** Initializes logout link */
+function init_logout_link() {
+    ge("logout_link").href = "/logout?"+get_session();
 }
 
 /** Initializes QSO feed */

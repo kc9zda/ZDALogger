@@ -30,6 +30,7 @@ function HTTPServer(conf) {
 	this.localEPs.push(["/js/login.js","http/login.js","text/javascript"]);
 	this.localEPs.push(["/js/forgot.js","http/forgot.js","text/javascript"]);
 	this.localEPs.push(["/js/create.js","http/create.js","text/javascript"]);
+	this.localEPs.push(["/js/logout.js","http/logout.js","text/javascript"]);
 	this.localEPs.push(["/js/ctydat.js","http/ctydecode/ctydat.js","text/javascript"]);
 	this.localEPs.push(["/js/gridsquare.js","http/gridsquare.js","text/javascript"]);
 
@@ -41,6 +42,19 @@ function HTTPServer(conf) {
 	this.handlerEPs.push(["/login_post",this.postLogin]);
 	this.handlerEPs.push(["/forgot_post",this.postReset]);
 	this.handlerEPs.push(["/create_post",this.postCreate]);
+	this.handlerEPs.push(["/logout",this.getLogout.bind(this)]);
+}
+
+/** Handles a GET request to /logout 
+ * @param {IncomingMessage} req - Incoming Request
+ * @param {ServerResponse} res - Outgoing Response
+ */
+HTTPServer.prototype.getLogout = function(req,res) {
+	var u = url.parse(req.url);
+	var s = u.query;
+
+	Global.authenticator.logoutSession(s);
+	this.sendFile(res,"http/logout.html","text/html");
 }
 
 /** Handles a POST request to /create_post
