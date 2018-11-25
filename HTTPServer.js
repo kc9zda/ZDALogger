@@ -22,10 +22,8 @@ function HTTPServer(conf) {
 	this.localEPs.push(["/forgot","http/forgot.html","text/html"]);
 	this.localEPs.push(["/create","http/create.html","text/html"]);
 
+	this.localEPs.push(["/css/common.css","http/common.css","text/css"]);
 	this.localEPs.push(["/css/log.css","http/log.css","text/css"]);
-	this.localEPs.push(["/css/login.css","http/login.css","text/css"]);
-	this.localEPs.push(["/css/forgot.css","http/forgot.css","text/css"]);
-	this.localEPs.push(["/css/create.css","http/create.css","text/css"]);
 
 	this.localEPs.push(["/js/bshelp2.js","http/bshelp2.js","text/javascript"]);
 	this.localEPs.push(["/js/log.js","http/log.js","text/javascript"]);
