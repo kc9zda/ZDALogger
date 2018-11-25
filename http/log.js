@@ -34,6 +34,12 @@ var stainfo = {
     /** @type {string} Grid square */
     grid: ""
 };
+/** @type {{img: string; link: string; text: string}[]} Solar information sources */
+var solar_sources = [
+    {img: "http://www.hamqsl.com/solarpic.php", link: "http://www.hamqsl.com/solar.html", text: "HamQSL.com / N0NBH"},
+    {img: "http://www.hamqsl.com/solar101vhf.php", link: "http://www.hamqsl.com/solar.html", text: "HamQSL.com / N0NBH"},
+    {img: "http://www.hamqsl.com/solarmap.php", link: "http://www.hamqsl.com/solar.html", text: "HamQSL.com / N0NBH"}
+];
 
 /** onload handler */
 function init() {
@@ -667,4 +673,32 @@ function chat_keyup(event) {
     if (event.key.toUpperCase() == "ENTER") {
         btn_chatsend();
     }
+}
+
+/** onclick handler for solar button */
+function btn_solar() {
+    var cont = "";
+
+    current_solar = solar_sources.length;
+    cont+="<a href=\"javascript:void(0);\" onclick=\"solar_advance();\"><img id=\"solarimg\" src=\"http://www.hamqsl.com/solarpic.php\"></a>";
+    cont+="<br>Solar Data Source: <a href=\"http://www.hamqsl.com/solar.html\" id=\"solarlink\" target=\"_blank\">HamQSL.com (N0NBH)</a>";
+    cont+="<hr><button class=\"btn btn-info\" onclick=\"btn_solar_close();\">Close</button>";
+    set_overlay(create_panel("Solar Information", cont, "solar", {extra_classes: "vcenter centered"}));
+    solar_advance();
+    show_overlay();
+}
+
+/** Advances to the next solar data format */
+function solar_advance() {
+    current_solar++;
+    if (current_solar>=solar_sources.length) current_solar = 0;
+
+    ge("solarimg").src = solar_sources[current_solar].img;
+    ge("solarlink").href = solar_sources[current_solar].link;
+    si("solarlink",solar_sources[current_solar].text);
+}
+
+/** onclick handler for solar window close button */
+function btn_solar_close() {
+    hide_overlay();
 }
