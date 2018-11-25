@@ -1,0 +1,11 @@
+[ Version 1.0 - Nov 25, 2018 ]
+
+* Initial release
+* Changelog
+* Basic, non-contest logging available
+* Capable of multiple users, using multiple callsigns
+* Account creation available
+* Very basic, insecure, password reset system available
+* Handy solar information available on logging pages
+* Chat available for multiple operators using the same callsign
+* List of operators operating with same callsign that shows their current band and mode.
