@@ -2,15 +2,18 @@ var loadInt,loadPd;
 
 /** onclick handler for login button */
 function btn_login() {
+    var cs = gv("callsign").toUpperCase();
+    var op = gv("operator").toUpperCase();
     set_overlay("<div class=\"panel vcenter centered\" id=\"loadpan\">Logging In</div>");
     loadInt = setInterval(updateLoadingPanel,750);
     loadPd = 0;
     si("alertbox","");
     show_overlay();
     
+    if (op == "") op = cs;
     $.post(
         "/login_post",
-        {callsign: gv("callsign").toUpperCase(), operator: gv("operator").toUpperCase(), password: gv("paswd")},
+        {callsign: cs, operator: op, password: gv("paswd")},
         logincb,
         "json",
         );
