@@ -744,3 +744,26 @@ function bearing_to_cardinal(deg) {
     if (deg < 348.75) return "NNW";
     return "N";
 }
+
+/** onclick handler for export button */
+function btn_export() {
+    coming_soon();
+}
+
+/** onclick handler for import button */
+function btn_import() {
+    coming_soon();
+}
+
+/** Shows a simple overlay to indicate a feature is coming soon */
+function coming_soon() {
+    var cont = "Coming soon...<br><br><button class=\"btn btn-info\" onclick=\"coming_soon_close();\">Close</a>";
+
+    set_overlay(create_panel("",cont,"coming_soon",{extra_classes: "vcenter centered", no_header: true}));
+    show_overlay();
+}
+
+/** Closes coming soon overlay */
+function coming_soon_close() {
+    hide_overlay();
+}
