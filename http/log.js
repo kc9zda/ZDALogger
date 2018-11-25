@@ -202,16 +202,27 @@ function ws_onmessage(m) {
             redir(o.redir);
             break;
         case "settings":
-            settings = o.settings;
+            if (o.settings) {
+                settings.chattz = o.settings.chattz || 0;
+                settings.distunit = o.settings.distunit || 0;
+                settings.logtz = o.settings.logtz || 0;
+                settings.dateform = o.settings.dateform || 0;
+            }
             break;
         case "stainfo":
-            stainfo = o.stainfo;
+            if (o.stainfo) {
+                stainfo.grid = o.stainfo.grid || "JJ00aa";
+            }
             break;
         case "mode":
-            current_mode = o.mode;
-            si("entryboxmode",o.mode);
-            current_band = o.band;
-            si("entryboxband",o.band);
+            if (o.mode) {
+                current_mode = o.mode;
+                si("entryboxmode",o.mode);
+            } else current_mode = "20m";
+            if (o.band) {
+                current_band = o.band;
+                si("entryboxband",o.band);
+            } else current_band = "SSB";
             break;
         default:
             console.log("unknown message from server: "+o.cmd);

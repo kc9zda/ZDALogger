@@ -65,7 +65,8 @@ SettingsManager.prototype.getSettingsForSession = function(ses) {
     var cs = s.callsign;
     var op = s.operator;
 
-    return this.db[cs][op].settings;
+    if (this.db[cs] && this.db[cs][op]) return this.db[cs][op].settings;
+    else return {};
 }
 
 SettingsManager.prototype.getStaInfoForSession = function(ses) {
@@ -73,7 +74,8 @@ SettingsManager.prototype.getStaInfoForSession = function(ses) {
     var cs = s.callsign;
     var op = s.operator;
 
-    return this.db[cs][op].stainfo;
+    if (this.db[cs] && this.db[cs][op]) return this.db[cs][op].stainfo;
+    else return {};
 }
 
 SettingsManager.prototype.getModeForSession = function(ses) {
@@ -81,7 +83,8 @@ SettingsManager.prototype.getModeForSession = function(ses) {
     var cs = s.callsign;
     var op = s.operator;
 
-    return this.db[cs][op].mode;
+    if (this.db[cs] && this.db[cs][op]) return this.db[cs][op].mode;
+    else return "SSB";
 }
 
 SettingsManager.prototype.getBandForSession = function(ses) {
@@ -89,7 +92,8 @@ SettingsManager.prototype.getBandForSession = function(ses) {
     var cs = s.callsign;
     var op = s.operator;
 
-    return this.db[cs][op].band;
+    if (this.db[cs] && this.db[cs][op]) return this.db[cs][op].band;
+    else return "20m";
 }
 
 SettingsManager.prototype.updateMode = function(ses, mode, band) {
