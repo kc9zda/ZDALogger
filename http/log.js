@@ -23,7 +23,11 @@ var settings = {
     /** @type {number} Chat timezone */
     chattz: 0,
     /** @type {number} Distance units */
-    distunit: 0
+    distunit: 0,
+    /** @type {number} Log timezone */
+    logtz: 0,
+    /** @type {number} Date format */
+    dateform: 0
 };
 /** @type {object} Station info */
 var stainfo = {
@@ -428,12 +432,14 @@ function btn_settings() {
 
     cont = "Chat time zone: <select id=\"settings_chattz\"><option>UTC</option><option>Local</option></select><br>";
     cont+= "Log time zone: <select id=\"settings_logtz\"><option>UTC</option><option>Local</option></select><br>";
+    cont+= "Date format: <select id=\"settings_dateform\"><option>mm/dd</option><option>dd/mm</option></select><br>";
     cont+= "Distance units: <select id=\"settings_distunit\"><option>Kilometers</option><option>Miles</option></select>";
     cont+= "<hr><button class=\"btn btn-info\" onclick=\"btn_settings_close();\">Close</button>";
     set_overlay(create_panel("Settings", cont, "settings", {extra_classes: "vcenter centered"}));
     ge("settings_chattz").selectedIndex = settings.chattz;
     ge("settings_distunit").selectedIndex = settings.distunit;
     ge("settings_logtz").selectedIndex = settings.logtz;
+    ge("settings_dateform").selectedIndex = settings.dateform;
     show_overlay();
 }
 
@@ -444,6 +450,7 @@ function btn_settings_close() {
     settings.chattz = ge("settings_chattz").selectedIndex;
     settings.distunit = ge("settings_distunit").selectedIndex;
     settings.logtz = ge("settings_logtz").selectedIndex;
+    settings.dateform = ge("settings_dateform").selectedIndex;
     hide_overlay();
     o.cmd = "settings";
     o.settings = settings;
@@ -483,10 +490,11 @@ function uds(d) {
     var d2 = ("0"+d.getUTCDate()).slice(-2);
     var y = d.getUTCFullYear();
 
-    return m+"/"+d2+"/"+y;
+    if (settings.dateform == 1) return d2+"/"+m+"/"+y;
+    else return m+"/"+d2+"/"+y;
 }
 
-/** Gets UTC date string
+/** Gets local date string
  * @param {Date} d - Date
  * @return {string} UTC date string
  */
@@ -495,7 +503,8 @@ function lds(d) {
     var d2 = ("0"+d.getDate()).slice(-2);
     var y = d.getFullYear();
 
-    return m+"/"+d2+"/"+y;
+    if (settings.dateform == 1) return d2+"/"+m+"/"+y;
+    else return m+"/"+d2+"/"+y;
 }
 
 /** Gets a URL parameter
