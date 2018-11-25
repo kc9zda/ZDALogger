@@ -274,6 +274,7 @@ function send_band_mode() {
 function btn_log()  {
     var o = {};
 
+    if (gv("qsocall").trim() == "") return;
     o.cmd = "qso";
     o.timestamp = Date.now();
     o.callsign = gv("qsocall").toUpperCase();
