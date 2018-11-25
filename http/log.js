@@ -648,3 +648,17 @@ function encode_distance(mtrs) {
             return mtrs+" m";
     }
 }
+
+/** onkeyup handler for qso entry box */
+function qsoln_keyup(event) {
+    if (event.key.toUpperCase() == "ENTER") {
+        btn_log();
+    }
+}
+
+/** onkeyup handler for chat box */
+function chat_keyup(event) {
+    if (event.key.toUpperCase() == "ENTER") {
+        btn_chatsend();
+    }
+}
