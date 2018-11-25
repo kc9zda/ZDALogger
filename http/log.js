@@ -207,6 +207,12 @@ function ws_onmessage(m) {
         case "stainfo":
             stainfo = o.stainfo;
             break;
+        case "mode":
+            current_mode = o.mode;
+            si("entryboxmode",o.mode);
+            current_band = o.band;
+            si("entryboxband",o.band);
+            break;
         default:
             console.log("unknown message from server: "+o.cmd);
             break;

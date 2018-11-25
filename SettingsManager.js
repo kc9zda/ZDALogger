@@ -27,7 +27,9 @@ SettingsManager.prototype.updateSettings = function(ses,set) {
     if (!this.db[cs][op]) {
         this.db[cs][op] = {
             settings: {},
-            stainfo: {}
+            stainfo: {},
+            band: "20m",
+            mode: "SSB"
         };
     }
     this.db[cs][op].settings = set;
@@ -45,7 +47,9 @@ SettingsManager.prototype.updateStaInfo = function(ses,sa) {
     if (!this.db[cs][op]) {
         this.db[cs][op] = {
             settings: {},
-            stainfo: {}
+            stainfo: {},
+            band: "20m",
+            mode: "SSB"
         };
     }
     this.db[cs][op].stainfo = sa;
@@ -70,6 +74,44 @@ SettingsManager.prototype.getStaInfoForSession = function(ses) {
     var op = s.operator;
 
     return this.db[cs][op].stainfo;
+}
+
+SettingsManager.prototype.getModeForSession = function(ses) {
+    var s = Global.authenticator.getSession(ses);
+    var cs = s.callsign;
+    var op = s.operator;
+
+    return this.db[cs][op].mode;
+}
+
+SettingsManager.prototype.getBandForSession = function(ses) {
+    var s = Global.authenticator.getSession(ses);
+    var cs = s.callsign;
+    var op = s.operator;
+
+    return this.db[cs][op].band;
+}
+
+SettingsManager.prototype.updateMode = function(ses, mode, band) {
+    var s = Global.authenticator.getSession(ses);
+    if (!s) return;
+    var cs = s.callsign;
+    var op = s.operator;
+
+    if (!this.db[cs]) {
+        this.db[cs] = {};
+    }
+    if (!this.db[cs][op]) {
+        this.db[cs][op] = {
+            settings: {},
+            stainfo: {},
+            band: "20m",
+            mode: "SSB"
+        };
+    }
+    this.db[cs][op].mode = mode;
+    this.db[cs][op].band = band;
+    this.updateDatabase();
 }
 
 module.exports = SettingsManager;

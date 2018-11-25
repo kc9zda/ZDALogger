@@ -91,6 +91,7 @@ WSConnection.prototype.join = function(obj) {
 WSConnection.prototype.setMode = function(obj) {
     this.band = obj.band;
     this.mode = obj.mode;
+    Global.settingsManager.updateMode(this.session, this.mode, this.band);
     this.manager.updateOnline(this.callsign);
 }
 
@@ -244,6 +245,8 @@ WSConnection.prototype.msg_settings = function(obj) {
 WSConnection.prototype.sendSettings = function(ses) {
     var set = Global.settingsManager.getSettingsForSession(ses);
     var sa = Global.settingsManager.getStaInfoForSession(ses);
+    var mode = Global.settingsManager.getModeForSession(ses);
+    var band = Global.settingsManager.getBandForSession(ses);
 
     var o = {};
     o.cmd = "settings";
@@ -253,6 +256,12 @@ WSConnection.prototype.sendSettings = function(ses) {
     o = {};
     o.cmd = "stainfo";
     o.stainfo = sa;
+    this.send_message(o);
+
+    o = {};
+    o.cmd = "mode";
+    o.mode = mode;
+    o.band = band;
     this.send_message(o);
 }
 
