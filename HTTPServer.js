@@ -21,6 +21,7 @@ function HTTPServer(conf) {
 	this.localEPs.push(["/log","http/log.html","text/html"]);
 	this.localEPs.push(["/forgot","http/forgot.html","text/html"]);
 	this.localEPs.push(["/create","http/create.html","text/html"]);
+	this.localEPs.push(["/contest","http/contest.html","text/html"]);
 
 	this.localEPs.push(["/css/common.css","http/common.css","text/css"]);
 	this.localEPs.push(["/css/log.css","http/log.css","text/css"]);
@@ -38,6 +39,7 @@ function HTTPServer(conf) {
 	this.localEPs.push(["/js/ctydat.js","http/ctydecode/ctydat.js","text/javascript"]);
 	this.localEPs.push(["/js/gridsquare.js","http/gridsquare.js","text/javascript"]);
 	this.localEPs.push(["/js/jquery-3.3.1.min.js","http/jquery-3.3.1.min.js","text/javascript"]);
+	this.localEPs.push(["/js/contest.js","http/contest.js","text/javascript"]);
 
 	this.localEPs.push(["/favicon.ico","http/radio_log.png","image/png"]);
 	this.localEPs.push(["/img/bt.png","http/bt.png","image/png"]);

@@ -15,6 +15,11 @@ function Authenticator() {
     this.sessions['DEFAULT3'] = new Session("XX9XXX","KC9ZDA");
     this.sessions['DEFAULT3'].id = "DEFAULT3";
 
+    /** @type {string[]} */
+    this.acceptableModes = [];
+    this.acceptableModes.push("log");
+    this.acceptableModes.push("contest");
+
     /** @type {PasswordManager} */
     this.passwordManager = new PasswordManager("passwd.json");
 }
@@ -38,14 +43,14 @@ Authenticator.prototype.getSession = function(ses) {
 Authenticator.prototype.processLogin = function(loginStr) {
     var sa = loginStr.split("&");
     var sa2;
-    var lr = {};  // should have callsign, operator, and password
+    var lr = {};  // should have callsign, operator, password, and dest
     var lo = {};
     
     for (var i=0;i<sa.length;i++) {
         sa2 = sa[i].split("=");
         lr[sa2[0]]=sa2[1];
     }
-    lo = this.authenticate(lr.callsign, lr.operator, lr.password);
+    lo = this.authenticate(lr.callsign, lr.operator, lr.password, lr.dest);
     return lo;
 }
 
@@ -79,11 +84,16 @@ Authenticator.prototype.genId = function() {
  * @param {string} cs - Callsign
  * @param {string} op - Operator
  * @param {string} pw - Password
+ * @param {string} dp - Destination page (log or contest)
  * @return {object} Login result object. If error is defined, an error occurred. redir directs the browser to a new URL.
  */
-Authenticator.prototype.authenticate = function(cs,op,pw) {
+Authenticator.prototype.authenticate = function(cs,op,pw,dp) {
     var lo = {};
 
+    if (this.acceptableModes.indexOf(dp) < 0) {
+        lo.error = "nomode";
+        return lo;
+    }
     if (!this.passwordManager.hasCallsign(cs)) {
         lo.error = "nouser";
         return lo;
@@ -97,7 +107,7 @@ Authenticator.prototype.authenticate = function(cs,op,pw) {
         return lo;
     }
     lo.session = this.addSession(new Session(cs,op));
-    lo.redir = "/log?session="+lo.session;
+    lo.redir = "/"+dp+"?session="+lo.session;
     return lo;
 }
 

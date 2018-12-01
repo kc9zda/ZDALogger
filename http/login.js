@@ -13,7 +13,7 @@ function btn_login() {
     if (op == "") op = cs;
     $.post(
         "/login_post",
-        {callsign: cs, operator: op, password: gv("paswd")},
+        {callsign: cs, operator: op, password: gv("paswd"), dest: gv("dest")},
         logincb,
         "json",
         );
