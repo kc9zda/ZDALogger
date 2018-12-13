@@ -3,6 +3,7 @@ var contests = [];
 function init() {
     load_contests();
     display_contests();
+    init_ping();
 }
 
 function load_contests() {
@@ -51,4 +52,23 @@ function get_session() {
 function get_param(name) {
     if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
         return decodeURIComponent(name[1]);
+}
+
+/** Initializes ping to server */
+function init_ping() {
+    do_ping();
+}
+
+/** Sends a ping request to the server to keep session alive */
+function do_ping() {
+    function cb0() {
+        setTimeout(do_ping,500*parseInt(this.responseText)); // ping at half timeout
+    }
+
+    var oReq = new XMLHttpRequest();
+    var url = gfu("/ping?"+get_session());
+
+    oReq.addEventListener("load",cb0);
+    oReq.open("GET",url);
+    oReq.send();
 }

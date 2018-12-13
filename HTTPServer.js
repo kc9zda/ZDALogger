@@ -50,6 +50,21 @@ function HTTPServer(conf) {
 	this.handlerEPs.push(["/forgot_post",this.postReset]);
 	this.handlerEPs.push(["/create_post",this.postCreate]);
 	this.handlerEPs.push(["/logout",this.getLogout.bind(this)]);
+	this.handlerEPs.push(["/ping",this.getPing]);
+}
+
+/** Handles a GET request to /ping 
+ * @param {IncomingMessage} req - Incoming Request
+ * @param {ServerResponse} res - Outgoing Response
+ */
+HTTPServer.prototype.getPing = function(req,res) {
+	var u = url.parse(req.url);
+	var s = u.query;
+
+	Global.authenticator.ping(s);
+	res.setHeader("Content-Type","text/plain");
+	res.write(Global.conf.get("autoLogoutTime",30).toString());
+	res.end();
 }
 
 /** Handles a GET request to /logout 

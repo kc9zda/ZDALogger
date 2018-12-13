@@ -89,6 +89,7 @@ Authenticator.prototype.genId = function() {
  */
 Authenticator.prototype.authenticate = function(cs,op,pw,dp) {
     var lo = {};
+    var session;
 
     if (this.acceptableModes.indexOf(dp) < 0) {
         lo.error = "nomode";
@@ -106,7 +107,9 @@ Authenticator.prototype.authenticate = function(cs,op,pw,dp) {
         lo.error = "dupeop";
         return lo;
     }
-    lo.session = this.addSession(new Session(cs,op));
+    session = new Session(cs,op);
+    session.disconnect(); // enable reconnect timer
+    lo.session = this.addSession(session);
     lo.redir = "/"+dp+"?session="+lo.session;
     return lo;
 }
@@ -214,6 +217,14 @@ Authenticator.prototype.connect = function(ses) {
 Authenticator.prototype.logoutSession = function(ses) {
     if (this.sessions[ses] && this.sessions[ses].waitReconnect) clearTimeout(this.sessions[ses].reconnectTimeout);
     delete this.sessions[ses];
+}
+
+/** Keeps session alive 
+ * @param {string} ses - Session ID to ping
+ */
+Authenticator.prototype.ping = function(ses) {
+    var s = this.getSession(ses);
+    if (s) s.ping();
 }
 
 module.exports = Authenticator;

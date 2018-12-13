@@ -37,4 +37,12 @@ Session.prototype.disconnect = function() {
     this.reconnectTimeout = setTimeout(cb.bind(this),1000*Global.conf.get("autoLogoutTime",30)); // 30 seconds, todo: config this
 }
 
+/** Resets reconnect timer */
+Session.prototype.ping = function() {
+    if (this.waitReconnect) {
+        clearTimeout(this.reconnectTimeout);
+        this.disconnect(); // restart timer
+    }
+}
+
 module.exports = Session;
