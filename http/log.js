@@ -223,6 +223,7 @@ function ws_onmessage(m) {
                 current_band = o.band;
                 si("entryboxband",o.band);
             } else current_band = "SSB";
+            send_band_mode();
             break;
         default:
             console.log("unknown message from server: "+o.cmd);
