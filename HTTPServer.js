@@ -25,6 +25,7 @@ function HTTPServer(conf) {
 
 	this.localEPs.push(["/css/common.css","http/common.css","text/css"]);
 	this.localEPs.push(["/css/log.css","http/log.css","text/css"]);
+	this.localEPs.push(["/css/contest.css","http/contest.css","text/css"]);
 
 	this.localEPs.push(["/bs/css/bootstrap.min.css","http/bootstrap-3.3.7-dist/css/bootstrap.min.css","text/css"]);
 	this.localEPs.push(["/bs/css/bootstrap-theme.min.css","http/bootstrap-3.3.7-dist/css/bootstrap-theme.min.css","text/css"]);
