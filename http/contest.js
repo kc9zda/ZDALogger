@@ -30,7 +30,7 @@ function gen_contest_html(i) {
 }
 
 function select_contest(i) {
-    // TODO
+    redir("/"+contests[i].code+"?session="+get_session());
 }
 
 function btn_back() {
