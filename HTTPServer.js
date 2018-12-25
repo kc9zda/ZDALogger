@@ -22,10 +22,12 @@ function HTTPServer(conf) {
 	this.localEPs.push(["/forgot","http/forgot.html","text/html"]);
 	this.localEPs.push(["/create","http/create.html","text/html"]);
 	this.localEPs.push(["/contest","http/contest.html","text/html"]);
+	this.localEPs.push(["/fd","http/fd.html","text/html"]);
 
 	this.localEPs.push(["/css/common.css","http/common.css","text/css"]);
 	this.localEPs.push(["/css/log.css","http/log.css","text/css"]);
 	this.localEPs.push(["/css/contest.css","http/contest.css","text/css"]);
+	this.localEPs.push(["/css/contestlog.css","http/contestlog.css","text/css"]);
 
 	this.localEPs.push(["/bs/css/bootstrap.min.css","http/bootstrap-3.3.7-dist/css/bootstrap.min.css","text/css"]);
 	this.localEPs.push(["/bs/css/bootstrap-theme.min.css","http/bootstrap-3.3.7-dist/css/bootstrap-theme.min.css","text/css"]);
@@ -41,6 +43,8 @@ function HTTPServer(conf) {
 	this.localEPs.push(["/js/gridsquare.js","http/gridsquare.js","text/javascript"]);
 	this.localEPs.push(["/js/jquery-3.3.1.min.js","http/jquery-3.3.1.min.js","text/javascript"]);
 	this.localEPs.push(["/js/contest.js","http/contest.js","text/javascript"]);
+	this.localEPs.push(["/js/contestlog.js","http/contestlog.js","text/javascript"]);
+	this.localEPs.push(["/js/fd.js","http/fd.js","text/javascript"]);
 
 	this.localEPs.push(["/favicon.ico","http/radio_log.png","image/png"]);
 	this.localEPs.push(["/img/bt.png","http/bt.png","image/png"]);

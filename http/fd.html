@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>ZDA Logger</title>
+		<meta charset='UTF-8'>
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<script src="/js/jquery-3.3.1.min.js"></script>
+		<link rel="stylesheet" href="/bs/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/bs/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="/css/common.css" />
+        <link rel="stylesheet" href="/css/log.css" />
+		<link rel="stylesheet" href="/css/contestlog.css" />
+		<script src="/bs/js/bootstrap.min.js"></script>
+		<script src="/js/bshelp2.js"></script>
+		<script src="/js/contestlog.js"></script>
+		<script src="/js/ctydat.js"></script>
+        <script src="/js/gridsquare.js"></script>
+        <script src="/js/fd.js"></script>
+	</head>
+	<body onload="init();">
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="javascript:void(0)">ZDA Logger</a>
+				</div>
+				<div id="navbar" class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						<li><a href="javascript:void(0)" onclick="btn_export();">Export</a></li>
+						<li><a href="javascript:void(0)" onclick="btn_import();">Import</a></li>
+						<li><a href="javascript:void(0)" onclick="btn_filters();">Filters</a></li>
+						<li><a href="javascript:void(0)" onclick="btn_settings();">Settings</a></li>
+						<li><a href="javascript:void(0)" onclick="btn_solar();">Solar</a></li>
+						<li><a href="/logout" id="logout_link">Logout</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+		<!-- put container for alerts here maybe? -->
+		<div id="logbox-cont">
+			<table id="logbox" class="table">
+				<thead id="logbox-head">
+					<tr>
+						<th>test1</th>
+						<th>test2</th>
+					</tr>
+				</thead>
+				<tbody id="logbox-body">
+					<tr>
+						<td>data1</td>
+						<td>data2</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<br>
+		<div id="entrybox" class="panel panel-default">
+			<div class="panel-heading">
+				QSO Entry
+				<div style="float: right;" id="timebox"></div>
+			</div>
+			<div class="panel-body">
+				<div class="qsoln" onkeyup="qsoln_keyup(event);">
+					<input type="text" id="qsocall" autofocus onkeyup="onchange_qsocall();" placeholder="Callsign">
+                    <input type="text" class="qsoexchange" id="qsoclass" placeholder="Class">
+                    <input type="text" class="qsoexchange" id="qsosection" placeholder="Section">
+					<button class="btn btn-info" onclick="btn_log();">Log</button>
+				</div>
+				<div class="qsoln">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-default" onclick="btn_band();" id="entryboxband">Band</button>
+						<button type="button" class="btn btn-default" onclick="btn_mode();" id="entryboxmode">Mode</button>
+					</div>
+					<button type="button" style="float: right;" class="btn btn-default" onclick="btn_stainfo();">Station Info</button>
+                    <hr>
+                    <div id="dupecheck">
+                    </div>
+					<div id="country">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="chatbox" class="panel panel-default">
+			<div class="panel-heading">
+				Chat
+			</div>
+			<div id="chatbox-body" class="panel-body">
+				<div id="chatbox-entry" onkeyup="chat_keyup(event);">
+					<input type="text" id="chatboxtext" placeholder="Chat message"><button class="btn btn-info" onclick="btn_chatsend();">Send</button>
+					<button style="float: right;" class="btn btn-secondary" id="opsonline" onclick="btn_opsonline();">? ops online</button>
+				</div>
+				<hr>
+				<div id="chatbox-scroller">
+					abc<br>
+				</div>
+			</div>
+		</div>
+		<div id="overlay" class="centered">
+			<div id="overlay-body" class="centered vcenter"></div>
+		</div>
+	</body>
+</html>
