@@ -105,6 +105,36 @@ FieldDayLog.prototype.ws_onopen = function() {
     hide_overlay();
 }
 
+FieldDayLog.prototype.init_qso_feed = function() {
+    this.qfhead = this.build_tblrow("th",["","FromCall", "FromOp", "Freq", "Mode", "Call", "Time", "Date", "Class", "Section"]);
+    this.qfbody = "";
+    this.update_qso_feed();
+}
+
+/** Adds QSO to feed
+ * @param {object} qso - QSO to add
+ */
+FieldDayLog.prototype.add_to_feed = function(qso) {
+    var d = new Date(qso.timestamp);
+    var s,date,time;
+
+    this.log.push(qso);
+    switch(this.settings.logtz) {
+        case 1:
+            time = this.lts(d);
+            date = this.lds(d);
+            break;
+        case 0:
+        default:
+            time = this.uts(d);
+            date = this.uds(d);
+            break;
+    }
+    s = this.build_tblrow("td",[(qso.mine?"<a href=\"javascript:void(0);\" onclick=\"ZDALOG.btn_delqso("+qso.id+")\">X</a>":""),qso.fmcallsign, qso.fmoperator, qso.band, qso.mode, qso.dxcallsign, time, date, (qso.class||" "), (qso.section||" ")]);
+    this.qfbody = s + this.qfbody;
+    this.update_qso_feed();
+}
+
 function init() {
     ZDALOG = new FieldDayLog();
 }
