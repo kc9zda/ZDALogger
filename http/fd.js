@@ -1,5 +1,5 @@
 /** @type {string[]} List of supported bands */
-var bands = ["2200m","1750m","630m","160m","80m","60m","40m","30m","20m","17m","15m","12m","10m","6m","2m","1.25m","70cm","33cm","23cm","13cm","9cm","5cm","3cm","1.2cm","6mm","4mm","2.5mm","2mm","1mm"];
+var bands = ["2200m","1750m","630m","160m","80m","40m","20m","15m","10m","6m","2m","1.25m","70cm","33cm","23cm","13cm","9cm","5cm","3cm","1.2cm","6mm","4mm","2.5mm","2mm","1mm"];
 /** @type {string[]} List of supported modes */
 var modes = ["CW","PHONE","IMAGE","DATA","AM","C4FM","DIGITALVOICE","DSTAR","FM","SSB","ATV","FAX","SSTV","AMTOR","ARDOP","CHIP","CLOVER","CONTESTI","DOMINO","FSK31","FSK441","FT8","GTOR","HELL","HFSK","ISCAT","JT4","JT65","JT6M","JT9","MFSK16","MFSK8","MINIRTTY","MSK144","MT63","OLIVIA","OPERA","PACKET","PAX","PSK10","PSK125","PSK2K","PSK31","PSK63","PSK63F","PSKAM","PSKFEC31","Q15","QRA64","ROS","RTTY","RTTYM","T10","THOR","THROB","VOI","WINMOR","WSPR"];
 
