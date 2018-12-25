@@ -105,6 +105,7 @@ FieldDayLog.prototype.ws_onopen = function() {
     hide_overlay();
 }
 
+/** Initialize log table */
 FieldDayLog.prototype.init_qso_feed = function() {
     this.qfhead = this.build_tblrow("th",["","FromCall", "FromOp", "Freq", "Mode", "Call", "Time", "Date", "Class", "Section"]);
     this.qfbody = "";
@@ -135,6 +136,7 @@ FieldDayLog.prototype.add_to_feed = function(qso) {
     this.update_qso_feed();
 }
 
+/** Initialize logging object */
 function init() {
     ZDALOG = new FieldDayLog();
 }

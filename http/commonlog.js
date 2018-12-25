@@ -1,7 +1,12 @@
+/** Object containing default logging functions */
 function BaseLog() {
+    /** @type {string} QSO feed heading */
     this.qfhead = "";
+    /** @type {string} QSO feed body */
     this.qfbody = "";
+    /** @type {string} Current band */
     this.current_band = "20m";
+    /** @type {string} Current mode */
     this.current_mode = "SSB";
     /** @type {object} Settings */
     this.settings = {
@@ -44,33 +49,49 @@ function BaseLog() {
     this.init_ws();
 }
 
+/** Initializes logout link */
 BaseLog.prototype.init_logout_link = function() {
     ge("logout_link").href = "/logout?"+this.get_session();
 }
 
+/** Gets session string
+ * @return {string} Session ID
+ */
 BaseLog.prototype.get_session = function() {
     return this.get_param('session') || "DEFAULT";
 }
 
+/** Gets a URL parameter
+ * @param {string} name - Parameter name
+ * @return {string} Parameter value
+ */
 BaseLog.prototype.get_param = function(name) {
     if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
         return decodeURIComponent(name[1]);
 }
 
+/** initializes CtyDat database */
 BaseLog.prototype.init_cty_dat = function() {
     CtyDat.loadFromURL(gfu("/cty.dat"),this.onctyload.bind(this));
 }
 
+/** onload callback for cty.dat */
 BaseLog.prototype.onctyload = function() {
     console.log("cty.dat loaded");
 }
 
+/** Initializes QSO feed */
 BaseLog.prototype.init_qso_feed = function() {
     this.qfhead = this.build_tblrow("th",["","FromCall", "FromOp", "Freq", "Mode", "Call", "Time", "Date", "Comment"]);
     this.qfbody = "";
     this.update_qso_feed();
 }
 
+/** Builds a table row
+ * @param {string} ct - cell type
+ * @param {string[]} dat - row data
+ * @return {string} row HTML
+ */
 BaseLog.prototype.build_tblrow = function(ct, dat) {
     var s = "";
 
