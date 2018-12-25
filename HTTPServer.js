@@ -43,7 +43,7 @@ function HTTPServer(conf) {
 	this.localEPs.push(["/js/gridsquare.js","http/gridsquare.js","text/javascript"]);
 	this.localEPs.push(["/js/jquery-3.3.1.min.js","http/jquery-3.3.1.min.js","text/javascript"]);
 	this.localEPs.push(["/js/contest.js","http/contest.js","text/javascript"]);
-	this.localEPs.push(["/js/contestlog.js","http/contestlog.js","text/javascript"]);
+	this.localEPs.push(["/js/commonlog.js","http/commonlog.js","text/javascript"]);
 	this.localEPs.push(["/js/fd.js","http/fd.js","text/javascript"]);
 
 	this.localEPs.push(["/favicon.ico","http/radio_log.png","image/png"]);

@@ -12,7 +12,7 @@
 		<link rel="stylesheet" href="/css/contestlog.css" />
 		<script src="/bs/js/bootstrap.min.js"></script>
 		<script src="/js/bshelp2.js"></script>
-		<script src="/js/contestlog.js"></script>
+		<script src="/js/commonlog.js"></script>
 		<script src="/js/ctydat.js"></script>
         <script src="/js/gridsquare.js"></script>
         <script src="/js/fd.js"></script>
@@ -31,11 +31,11 @@
 				</div>
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
-						<li><a href="javascript:void(0)" onclick="btn_export();">Export</a></li>
-						<li><a href="javascript:void(0)" onclick="btn_import();">Import</a></li>
-						<li><a href="javascript:void(0)" onclick="btn_filters();">Filters</a></li>
-						<li><a href="javascript:void(0)" onclick="btn_settings();">Settings</a></li>
-						<li><a href="javascript:void(0)" onclick="btn_solar();">Solar</a></li>
+						<li><a href="javascript:void(0)" onclick="ZDALOG.btn_export();">Export</a></li>
+						<li><a href="javascript:void(0)" onclick="ZDALOG.btn_import();">Import</a></li>
+						<li><a href="javascript:void(0)" onclick="ZDALOG.btn_filters();">Filters</a></li>
+						<li><a href="javascript:void(0)" onclick="ZDALOG.btn_settings();">Settings</a></li>
+						<li><a href="javascript:void(0)" onclick="ZDALOG.btn_solar();">Solar</a></li>
 						<li><a href="/logout" id="logout_link">Logout</a></li>
 					</ul>
 				</div>
@@ -65,18 +65,18 @@
 				<div style="float: right;" id="timebox"></div>
 			</div>
 			<div class="panel-body">
-				<div class="qsoln" onkeyup="qsoln_keyup(event);">
-					<input type="text" id="qsocall" autofocus onkeyup="onchange_qsocall();" placeholder="Callsign">
+				<div class="qsoln" onkeyup="ZDALOG.qsoln_keyup(event);">
+					<input type="text" id="qsocall" autofocus onkeyup="ZDALOG.onchange_qsocall();" placeholder="Callsign">
                     <input type="text" class="qsoexchange" id="qsoclass" placeholder="Class">
                     <input type="text" class="qsoexchange" id="qsosection" placeholder="Section">
-					<button class="btn btn-info" onclick="btn_log();">Log</button>
+					<button class="btn btn-info" onclick="ZDALOG.btn_log();">Log</button>
 				</div>
 				<div class="qsoln">
 					<div class="btn-group" role="group">
-						<button type="button" class="btn btn-default" onclick="btn_band();" id="entryboxband">Band</button>
-						<button type="button" class="btn btn-default" onclick="btn_mode();" id="entryboxmode">Mode</button>
+						<button type="button" class="btn btn-default" onclick="ZDALOG.btn_band();" id="entryboxband">Band</button>
+						<button type="button" class="btn btn-default" onclick="ZDALOG.btn_mode();" id="entryboxmode">Mode</button>
 					</div>
-					<button type="button" style="float: right;" class="btn btn-default" onclick="btn_stainfo();">Station Info</button>
+					<button type="button" style="float: right;" class="btn btn-default" onclick="ZDALOG.btn_stainfo();">Station Info</button>
                     <hr>
                     <div id="dupecheck">
 					</div>
@@ -91,9 +91,9 @@
 				Chat
 			</div>
 			<div id="chatbox-body" class="panel-body">
-				<div id="chatbox-entry" onkeyup="chat_keyup(event);">
-					<input type="text" id="chatboxtext" placeholder="Chat message"><button class="btn btn-info" onclick="btn_chatsend();">Send</button>
-					<button style="float: right;" class="btn btn-secondary" id="opsonline" onclick="btn_opsonline();">? ops online</button>
+				<div id="chatbox-entry" onkeyup="ZDALOG.chat_keyup(event);">
+					<input type="text" id="chatboxtext" placeholder="Chat message"><button class="btn btn-info" onclick="ZDALOG.btn_chatsend();">Send</button>
+					<button style="float: right;" class="btn btn-secondary" id="opsonline" onclick="ZDALOG.btn_opsonline();">? ops online</button>
 				</div>
 				<hr>
 				<div id="chatbox-scroller">
