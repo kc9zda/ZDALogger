@@ -18,8 +18,8 @@ function onchange_qsocall() {
     if (o) {
         r = GridSquare.distance(stainfo.grid,o.latitude,o.longitude);
         s = "Country: <b>"+o.name+"</b><br>";
-        s+= "CQ: <b>"+o.cq+"</b>&nbsp;ITU: <b>"+o.itu+"</b><br>";
-        s+= "Lat: <b>"+o.latitude+"</b>&nbsp;Lon: <b>"+o.longitude+"</b><br>";
+        //s+= "CQ: <b>"+o.cq+"</b>&nbsp;ITU: <b>"+o.itu+"</b><br>";
+        //s+= "Lat: <b>"+o.latitude+"</b>&nbsp;Lon: <b>"+o.longitude+"</b><br>";
         s+= "Vec: <b>"+r.angle.toFixed(2)+"</b>&deg;&nbsp;("+bearing_to_cardinal(r.angle)+")&nbsp;<b>"+encode_distance(r.distance)+"</b>";
     } else {
         s = "";
