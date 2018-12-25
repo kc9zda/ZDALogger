@@ -36,6 +36,8 @@ var solar_sources = [
     {img: "http://www.hamqsl.com/solar101vhf.php", link: "http://www.hamqsl.com/solar.html", text: "HamQSL.com / N0NBH"},
     {img: "http://www.hamqsl.com/solarmap.php", link: "http://www.hamqsl.com/solar.html", text: "HamQSL.com / N0NBH"}
 ];
+/** @type {[]} Entire log */
+var log = [];
 
 /** onload handler */
 function init() {
@@ -341,6 +343,7 @@ function add_to_feed(qso) {
     var d = new Date(qso.timestamp);
     var s,date,time;
 
+    log.push(qso);
     switch(settings.logtz) {
         case 1:
             time = lts(d);

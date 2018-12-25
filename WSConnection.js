@@ -68,7 +68,7 @@ WSConnection.prototype.onmessage = function(msg) {
 WSConnection.prototype.join = function(obj) {
     this.session = obj.session;
     this.logtype = obj.logtype;
-    // if (this.logtype == "contest") this.contest = obj.contest;
+     if (this.logtype == "contest") this.contest = obj.contest;
     // this.isStatus = false;
     if (Global.authenticator.getSession(obj.session) == undefined) {
         //this.session = "DEFAULT";
@@ -112,6 +112,7 @@ WSConnection.prototype.qso = function(obj) {
     }
     qso_obj.fmcallsign = this.callsign;
     qso_obj.fmoperator = this.operator;
+    qso_obj.contest = this.contest;
     qso_obj.band = this.band;
     qso_obj.mode = this.mode;
     qso_obj.dxcallsign = obj.callsign;

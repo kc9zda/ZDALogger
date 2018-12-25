@@ -7,8 +7,10 @@ var modes = ["CW","PHONE","IMAGE","DATA","AM","C4FM","DIGITALVOICE","DSTAR","FM"
 function onchange_qsocall() {
     var cs = gv("qsocall").toUpperCase();
     var s = "";
+    var dl = [];
 
     if (cs=="") {
+        si("dupecheck","");
         si("country","");
         return;
     }
@@ -23,6 +25,21 @@ function onchange_qsocall() {
         s = "";
     }
     si("country",s);
+
+    for (var i=0;i<log.length;i++) {
+        if (((Date.now()-log[i].timestamp) < (2*86400*1000)) && (log[i].contest && log[i].contest == "fd") && log[i].mine && (log[i].band == current_band) && (log[i].mode == current_mode) && (log[i].dxcallsign.indexOf(cs) >= 0)) {
+            dl.push(log[i]);
+        }
+    }
+    if (dl.length>0) {
+        s = "Possible Duplicates:";
+        for (var i=0;i<dl.length;i++) {
+            s+=" "+dl[i].dxcallsign;
+        }
+        si("dupecheck",s);
+    } else {
+        si("dupecheck","");
+    }
 }
 
 /** onclick callback for station info button */
