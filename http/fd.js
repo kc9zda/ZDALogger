@@ -3,6 +3,7 @@ var ZDALOG;
 /** Field day logging object */
 function FieldDayLog() {
     BaseLog.call(this);
+    this.removeBands(["60m","30m","17m","12m"]);
 }
 
 FieldDayLog.prototype = Object.create(BaseLog.prototype);

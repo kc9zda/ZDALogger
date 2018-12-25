@@ -33,6 +33,8 @@ function BaseLog() {
     this.bands = ["2200m","1750m","630m","160m","80m","60m","40m","30m","20m","17m","15m","12m","10m","6m","2m","1.25m","70cm","33cm","23cm","13cm","9cm","5cm","3cm","1.2cm","6mm","4mm","2.5mm","2mm","1mm"];
     /** @type {string[]} List of supported modes */
     this.modes = ["CW","PHONE","IMAGE","DATA","AM","C4FM","DIGITALVOICE","DSTAR","FM","SSB","ATV","FAX","SSTV","AMTOR","ARDOP","CHIP","CLOVER","CONTESTI","DOMINO","FSK31","FSK441","FT8","GTOR","HELL","HFSK","ISCAT","JT4","JT65","JT6M","JT9","MFSK16","MFSK8","MINIRTTY","MSK144","MT63","OLIVIA","OPERA","PACKET","PAX","PSK10","PSK125","PSK2K","PSK31","PSK63","PSK63F","PSKAM","PSKFEC31","Q15","QRA64","ROS","RTTY","RTTYM","T10","THOR","THROB","VOI","WINMOR","WSPR"];
+    /** @type {[]} Entire log */
+    this.log = [];
 
     this.init_logout_link();
     this.init_cty_dat();
@@ -346,6 +348,7 @@ BaseLog.prototype.add_to_feed = function(qso) {
     var d = new Date(qso.timestamp);
     var s,date,time;
 
+    this.log.push(qso);
     switch(this.settings.logtz) {
         case 1:
             time = this.lts(d);
@@ -742,4 +745,22 @@ BaseLog.prototype.stainfo_grid_change = function() {
     var coord = GridSquare.decode(gv("stainfo_grid"));
 
     si("stainfo_loc","Lat: <b>"+coord.lat+"</b> Lon: <b>"+coord.lon+"</b>");
+}
+
+/** Remove bands from allowed list 
+ * @param {string[]} bs List of disallowed bands
+ */
+BaseLog.prototype.removeBands = function(bs) {
+    for (var i=0;i<bs.length;i++) {
+        this.removeBand(bs[i]);
+    }
+}
+
+/** Remove band from allowed list
+ * @param {string} b Band to be disallowed
+ */
+BaseLog.prototype.removeBand = function(b) {
+    var i = this.bands.indexOf(b);
+
+    this.bands.splice(i,0);
 }
