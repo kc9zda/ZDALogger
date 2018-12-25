@@ -118,6 +118,7 @@ WSConnection.prototype.qso = function(obj) {
     qso_obj.dxcallsign = obj.callsign;
     qso_obj.timestamp = obj.timestamp;
     qso_obj.comment = obj.comment;
+    qso_obj = Global.contestManager.addContestFields(qso_obj,obj,this.contest);
     Global.logger.submit(qso_obj);
 }
 
