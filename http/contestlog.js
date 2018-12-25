@@ -694,3 +694,14 @@ function escapeHTML(unsafe) {
 function btn_opsonline_close() {
     hide_overlay();
 }
+
+/** onclick handler for delete QSO button
+ * @param {number} id - QSO id
+ */
+function btn_delqso(id) {
+    var o = {};
+
+    o.cmd = "delete";
+    o.id = id;
+    ws_send_message(o);
+}
