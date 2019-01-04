@@ -71,8 +71,8 @@
 			<div class="panel-body">
 				<div class="qsoln" onkeyup="ZDALOG.qsoln_keyup(event);">
 					<input type="text" id="qsocall" autofocus onkeyup="ZDALOG.onchange_qsocall();" placeholder="Callsign">
-                    <input type="text" class="qsoexchange" id="qsoclass" placeholder="Class">
-                    <input type="text" class="qsoexchange" id="qsosection" placeholder="Section">
+                    <input type="text" class="qsoexchange" id="qsoclass" placeholder="Class" onfocus="ZDALOG.onfocus_qsoexchange();">
+                    <input type="text" class="qsoexchange" id="qsosection" placeholder="Section" onfocus="ZDALOG.onfocus_qsoexchange();">
 					<button class="btn btn-info" onclick="ZDALOG.btn_log();">Log</button>
 				</div>
 				<div class="qsoln">

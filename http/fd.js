@@ -3,6 +3,7 @@ var ZDALOG;
 /** Field day logging object */
 function FieldDayLog() {
     BaseLog.call(this);
+    this.dxcall_changed = false;
     this.removeBands(["60m","30m","17m","12m"]);
     this.update_qsohr_stat();
     setInterval(this.update_qsohr_stat.bind(this),10000);
@@ -16,6 +17,7 @@ FieldDayLog.prototype.onchange_qsocall = function() {
     var s = "";
     var dl = [];
 
+    this.dxcall_changed = true;
     if (cs=="") {
         si("dupecheck","");
         si("country","");
@@ -149,6 +151,24 @@ FieldDayLog.prototype.update_qsohr_stat = function() {
         }
     }
     si("qsohrstat","QSO/hr: "+count);
+}
+
+/** Onfocus handler for contest exchange fields */
+FieldDayLog.prototype.onfocus_qsoexchange = function() {
+    var cs = gv("qsocall").toUpperCase();
+    var dl = [];
+
+    if (!this.dxcall_changed) return;
+    this.dxcall_changed = false;
+    for (var i=0;i<this.log.length;i++) {
+        if (((Date.now()-this.log[i].timestamp) < (2*86400*1000)) && (this.log[i].contest && this.log[i].contest == "fd") && this.log[i].mine && (this.log[i].dxcallsign == cs)) {
+            dl.push(this.log[i]);
+        }
+    }
+    if (dl.length > 0) {
+        sv("qsoclass",dl[0].class);
+        sv("qsosection",dl[0].section);
+    }
 }
 
 /** Initialize logging object */
