@@ -785,3 +785,17 @@ BaseLog.prototype.removeBand = function(b) {
 
     this.bands.splice(i,0);
 }
+
+/** Onclick handler for Go To Page button */
+BaseLog.prototype.btn_gopage = function() {
+    var cont = "";
+
+    cont+="<b>Select a page to navigate to:</b><br>";
+    cont+="<ul class=\"list-group\">";
+    cont+="<li class=\"list-group-item\"><a href=\"/log?session="+this.get_session()+"\">Normal Log</a></li>";
+    cont+="<li class=\"list-group-item\"><a href=\"/contest?session="+this.get_session()+"\">Contest Selection</a></li>";
+    cont+="</ul><hr>";
+    cont+="<button class=\"btn btn-info\" onclick=\"btn_gopage_close();\">Close</button>";
+    set_overlay(create_panel("Navigate", cont, "navpage", {extra_classes: "vcenter centered"}));
+    show_overlay();
+}
