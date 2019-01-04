@@ -795,7 +795,12 @@ BaseLog.prototype.btn_gopage = function() {
     cont+="<li class=\"list-group-item\"><a href=\"/log?session="+this.get_session()+"\">Normal Log</a></li>";
     cont+="<li class=\"list-group-item\"><a href=\"/contest?session="+this.get_session()+"\">Contest Selection</a></li>";
     cont+="</ul><hr>";
-    cont+="<button class=\"btn btn-info\" onclick=\"btn_gopage_close();\">Close</button>";
+    cont+="<button class=\"btn btn-info\" onclick=\"ZDALOG.btn_gopage_close();\">Close</button>";
     set_overlay(create_panel("Navigate", cont, "navpage", {extra_classes: "vcenter centered"}));
     show_overlay();
+}
+
+/** Onclick handler for Navigation window close button */
+BaseLog.prototype.btn_gopage_close = function() {
+    hide_overlay();
 }
