@@ -4,6 +4,8 @@ var ZDALOG;
 function FieldDayLog() {
     BaseLog.call(this);
     this.removeBands(["60m","30m","17m","12m"]);
+    this.update_qsohr_stat();
+    setInterval(this.update_qsohr_stat.bind(this),10000);
 }
 
 FieldDayLog.prototype = Object.create(BaseLog.prototype);
@@ -134,6 +136,19 @@ FieldDayLog.prototype.add_to_feed = function(qso) {
     s = this.build_tblrow("td",[(qso.mine?"<a href=\"javascript:void(0);\" onclick=\"ZDALOG.btn_delqso("+qso.id+")\">X</a>":""),qso.fmcallsign, qso.fmoperator, qso.band, qso.mode, qso.dxcallsign, time, date, (qso.class||" "), (qso.section||" ")]);
     this.qfbody = s + this.qfbody;
     this.update_qso_feed();
+}
+
+/** Update QSO/Hour stat */
+FieldDayLog.prototype.update_qsohr_stat = function() {
+    var mine_list = [];
+    var count = 0;
+
+    for (var i=0;i<this.log.length;i++) {
+        if (((Date.now()-this.log[i].timestamp) < (60*60*1000)) && (this.log[i].contest && this.log[i].contest == "fd") && this.log[i].mine) {
+            count++;
+        }
+    }
+    si("qsohrstat","QSO/hr: "+count);
 }
 
 /** Initialize logging object */

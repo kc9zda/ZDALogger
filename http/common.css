@@ -16,6 +16,13 @@ html, body {
     width: initial;
 }
 
+.navbar-nav > li > span {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    line-height: 20px;
+    display: block;
+}
+
 #overlay {
     visibility: hidden;
     position: absolute;
