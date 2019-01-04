@@ -68,8 +68,8 @@ FieldDayLog.prototype.btn_log = function()  {
     o.cmd = "qso";
     o.timestamp = Date.now();
     o.callsign = gv("qsocall").toUpperCase();
-    o.section = gv("qsosection");
-    o.class = gv("qsoclass");
+    o.section = gv("qsosection").toUpperCase();
+    o.class = gv("qsoclass").toUpperCase();
     o.comment = "&lt;FD&gt;"+o.class+" "+o.section;
     o.session = this.get_session();
     this.ws_send_message(o);
