@@ -29,6 +29,8 @@ OperatorLog.prototype.submit = function(qso) {
     if (!this.isLoaded) this.loadLog();
 
     qso.cmd = undefined;
+    qso.mine = true;
+    qso.mystation = true;
     qso.id = ++this.maxId;
     this.log.push(qso);
     fs.writeFileSync(this.logFilename, JSON.stringify(this.log));
