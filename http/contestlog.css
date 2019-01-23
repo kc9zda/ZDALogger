@@ -1,3 +1,11 @@
 .qsoexchange {
     width: 75px;
 }
+
+.section_worked {
+    color: green;
+}
+
+.section_not_worked {
+    color: red;
+}

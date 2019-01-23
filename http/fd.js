@@ -13,6 +13,21 @@ function FieldDayLog() {
     };
     this.dxcall_changed = false;
     this.removeBands(["60m","30m","17m","12m"]);
+    this.groupnames = ["0","1","2","3","4","5","6","7","8","9","Canada","DX"];
+    this.sections = [];
+    this.sections[0] = ["CO", "IA", "KS", "MN", "MO", "ND", "NE", "SD"];
+    this.sections[1] = ["CT", "EMA", "ME", "NH", "RI", "VT", "WMA"];
+    this.sections[2] = ["ENY", "NLI", "NNJ", "NNY", "SNJ", "WNY"];
+    this.sections[3] = ["DE", "EPA", "MDC", "WPA"];
+    this.sections[4] = ["AL", "GA", "KY", "NC", "NFL", "PR", "SC", "SFL", "TN", "VA", "VI", "WCF"];
+    this.sections[5] = ["AR", "LA", "MS", "NM", "NTX", "OK", "STX", "WTX"];
+    this.sections[6] = ["EB", "LAX", "ORG", "PAC", "SB", "SCV", "SDG", "SF", "SJV", "SV"];
+    this.sections[7] = ["AK", "AZ", "EWA", "ID", "MT", "NV", "OR", "UT", "WWA", "WY"];
+    this.sections[8] = ["MI", "OH", "WV"];
+    this.sections[9] = ["IL", "IN", "WI"];
+    this.sections[10] = ["AB", "BC", "GTA", "MAR", "MB", "NL", "NT", "ONE", "ONN", "ONS", "QC", "SK"];
+    this.sections[11] = ["DX"];
+
     this.update_stats();
     setInterval(this.update_stats.bind(this),10000);
 }
@@ -132,6 +147,11 @@ FieldDayLog.prototype.add_to_feed = function(qso) {
     var s,date,time;
 
     this.log.push(qso);
+    if (qso.mine && ((Date.now() - qso.timestamp) < (60*1000))) {
+        if (this.stats.sections.indexOf(qso.section) < 0) {
+            this.stats.sections.push(qso.section);
+        }
+    }
     switch(this.settings.logtz) {
         case 1:
             time = this.lts(d);
@@ -189,6 +209,16 @@ FieldDayLog.prototype.update_stats = function() {
 
     // Points (2 for DIG, CW and 1 for PH)
     this.stats.points = (this.stats.cw_count * 2) + (this.stats.dig_count * 2) + this.stats.ph_count;
+
+    // Sections
+    if (!this.stats.sections && this.log) {
+        this.stats.sections = [];
+        for (var i=0;i<shortlist.length;i++) {
+            if (this.stats.sections.indexOf(shortlist[i].section) < 0) {
+                this.stats.sections.push(shortlist[i].section);
+            }
+        }
+    }
 }
 
 /** Onfocus handler for contest exchange fields */
@@ -213,12 +243,29 @@ FieldDayLog.prototype.onfocus_qsoexchange = function() {
 FieldDayLog.prototype.btn_stats = function() {
     var cont = "";
 
+    cont+="<table><tr><td><div style=\"margin: 15px;\">";
     cont+="QSO/hr (60 min): "+this.stats.qso_hr_60+"<br>";
     cont+="QSO/hr (20 min): "+this.stats.qso_hr_20+"<br>";
     cont+="Phone QSOs: "+this.stats.ph_count+"<br>";
     cont+="CW QSOs: "+this.stats.cw_count+"<br>";
     cont+="Digital QSOs: "+this.stats.dig_count+"<br>";
     cont+="QSO Points: "+this.stats.points+"<br>";
+    cont+="</div></td><td>";
+    cont+="Sections:<br>";
+    cont+="<table class=\"table\">";
+    for (var i=0;i<this.groupnames.length;i++) {
+        cont+="<tr><td>"+this.groupnames[i]+"</td><td>";
+        for (var j=0;j<this.sections[i].length;j++) {
+            var hs = (this.stats.sections.indexOf(this.sections[i][j])) >= 0;
+
+            if (hs) cont+=(j==0?"":", ")+"<span class=\"section_worked\">"+this.sections[i][j]+"</span>";
+            else cont+=(j==0?"":", ")+"<span class=\"section_not_worked\">"+this.sections[i][j]+"</span>";
+        }
+        cont+="</td></tr>";
+    }
+    cont+="</table>";
+    cont+="</td></tr></table>";
+
     cont+="<hr><button class=\"btn btn-info\" onclick=\"ZDALOG.btn_stats_close();\">Close</button>";
     set_overlay(create_panel("Statistics", cont, "stats", {extra_classes: "vcenter centered"}));
     show_overlay();
