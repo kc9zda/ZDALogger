@@ -6,6 +6,10 @@ function FieldDayLog() {
     this.stats = {
         qso_hr_20: -1,
         qso_hr_60: -1,
+        ph_count: 0,
+        cw_count: 0,
+        dig_count: 0,
+        points: 0,
     };
     this.dxcall_changed = false;
     this.removeBands(["60m","30m","17m","12m"]);
@@ -146,22 +150,45 @@ FieldDayLog.prototype.add_to_feed = function(qso) {
 
 /** Update statistics */
 FieldDayLog.prototype.update_stats = function() {
-    var mine_list = [];
+    var shortlist = [];
     var count = 0;
 
+    // generate shortlist
     for (var i=0;i<this.log.length;i++) {
-        if (((Date.now()-this.log[i].timestamp) < (20*60*1000)) && (this.log[i].contest && this.log[i].contest == "fd") && this.log[i].mine) {
-            count++;
+        if (((Date.now()-this.log[i].timestamp) < (2*86400*1000)) && (this.log[i].contest && this.log[i].contest == "fd" && this.log[i].mystation)) {
+            shortlist.push(this.log[i]);
+        }
+    }
+
+    // QSO/hr (20)
+    for (var i=0;i<shortlist.length;i++) {
+        if ((Date.now()-shortlist[i].timestamp) < (20*60*1000)) {
+            if (shortlist[i].mine) count++;
         }
     }
     this.stats.qso_hr_20 = count * 3;
+
+    // QSO/hr (60)
     count = 0;
-    for (var i=0;i<this.log.length;i++) {
-        if (((Date.now()-this.log[i].timestamp) < (60*60*1000)) && (this.log[i].contest && this.log[i].contest == "fd") && this.log[i].mine) {
-            count++;
+    for (var i=0;i<shortlist.length;i++) {
+        if ((Date.now()-shortlist[i].timestamp) < (60*60*1000)) {
+            if (shortlist[i].mine) count++;
         }
     }
     this.stats.qso_hr_60 = count;
+
+    // PH/CW/DIG Stats
+    this.stats.ph_count = 0;
+    this.stats.cw_count = 0;
+    this.stats.dig_count = 0;
+    for (var i=0;i<shortlist.length;i++) {
+        if (shortlist[i].mode == "PHONE") this.stats.ph_count++;
+        if (shortlist[i].mode == "CW") this.stats.cw_count++;
+        if (shortlist[i].mode == "DATA") this.stats.dig_count++;
+    }
+
+    // Points (2 for DIG, CW and 1 for PH)
+    this.stats.points = (this.stats.cw_count * 2) + (this.stats.dig_count * 2) + this.stats.ph_count;
 }
 
 /** Onfocus handler for contest exchange fields */
@@ -188,6 +215,10 @@ FieldDayLog.prototype.btn_stats = function() {
 
     cont+="QSO/hr (60 min): "+this.stats.qso_hr_60+"<br>";
     cont+="QSO/hr (20 min): "+this.stats.qso_hr_20+"<br>";
+    cont+="Phone QSOs: "+this.stats.ph_count+"<br>";
+    cont+="CW QSOs: "+this.stats.cw_count+"<br>";
+    cont+="Digital QSOs: "+this.stats.dig_count+"<br>";
+    cont+="QSO Points: "+this.stats.points+"<br>";
     cont+="<hr><button class=\"btn btn-info\" onclick=\"ZDALOG.btn_stats_close();\">Close</button>";
     set_overlay(create_panel("Statistics", cont, "stats", {extra_classes: "vcenter centered"}));
     show_overlay();

@@ -128,6 +128,7 @@ WSConnection.prototype.qso = function(obj) {
 WSConnection.prototype.feedQSO = function(qso) {
     if(!this.checkFilter(qso.fmcallsign, qso.fmoperator)) return;
     qso.mine = (this.callsign == qso.fmcallsign && this.operator == qso.fmoperator);
+    qso.mystation = (this.callsign == qso.fmcallsign);
     qso.cmd = "feed";
     this.send_message(qso);
 }
