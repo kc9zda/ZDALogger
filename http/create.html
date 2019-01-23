@@ -12,7 +12,7 @@
         <script src="/js/bshelp2.js"></script>
         <script src="/js/create.js"></script>
     </head>
-    <body>
+    <body onload="init();">
         <div class="panel panel-default vcenter centered">
             <div class="panel-heading">
                 Create Account
@@ -20,8 +20,9 @@
             <div class="panel-body">
                 <div id="alertbox"></div>
                 Callsign: <input type="text" id="callsign"><br>
-                Password: <input type="password" id="passwd"><br>
-                Confirm Password: <input type="password" id="passwd2"><br>
+                Password: <input type="password" id="passwd" onchange="onchange_password();" onkeyup="onchange_password();"><br>
+                Confirm Password: <input type="password" id="passwd2" onchange="onchange_password();" onkeyup="onchange_password();"><br>
+                Password Strength: <span id="pwscore" title="It is recommended to include at least one capitol letter and one number in your password. The password should also be longer than 8 characters">...</span>
                 <br>
                 <button class="btn btn-info" onclick="btn_create();">Create Account</button>
                 <br>

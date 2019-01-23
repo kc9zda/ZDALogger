@@ -71,3 +71,48 @@ function createcb(d,s,x) {
 function redircb() {
     redir("/login");
 }
+
+/** Onload handler for page */
+function init() {
+    onchange_password();
+}
+
+/** Onchange handler for password fields */
+function onchange_password() {
+    var p1 = gv("passwd");
+    var p2 = gv("passwd2");
+    var res = "Strong";
+    var rc = "green";
+    var score = 0;
+
+    if (p1!=p2) {
+        score = -1;
+    } else {
+        if ((new RegExp("[A-Z]")).test(p1)) score++;
+        if ((new RegExp("[0-9]")).test(p1)) score++;
+        if (p1.length < 8 && score > 1) score = 1;
+        if (p1.length < 4 && score > 0) score = 0;
+    }
+
+    switch (score) {
+        case -1:
+            res = "Passwords don't match";
+            rc = "red";
+            break;
+        case 0:
+            res = "Very weak";
+            rc = "red";
+            break;
+        case 1:
+            res = "Weak";
+            rc = "orange";
+            break;
+        case 2:
+            res = "Strong";
+            rc = "green";
+            break;
+    }
+
+    si("pwscore",res);
+    ge("pwscore").style.color = rc;
+}
