@@ -82,7 +82,7 @@ FieldDayLog.prototype.btn_stainfo = function() {
     cont+="<span id=\"stainfo_loc\"></span><br>";
     cont+="<hr><button class=\"btn btn-info\" onclick=\"ZDALOG.btn_stainfo_close();\">Close</button>";
     set_overlay(create_panel("Station Information", cont, "stainfo", {extra_classes: "vcenter centered"}));
-    sv("stainfo_grid",stainfo.grid);
+    sv("stainfo_grid",this.stainfo.grid);
     this.stainfo_grid_change();
     show_overlay();
 }
