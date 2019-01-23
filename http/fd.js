@@ -3,10 +3,14 @@ var ZDALOG;
 /** Field day logging object */
 function FieldDayLog() {
     BaseLog.call(this);
+    this.stats = {
+        qso_hr_20: -1,
+        qso_hr_60: -1,
+    };
     this.dxcall_changed = false;
     this.removeBands(["60m","30m","17m","12m"]);
-    this.update_qsohr_stat();
-    setInterval(this.update_qsohr_stat.bind(this),10000);
+    this.update_stats();
+    setInterval(this.update_stats.bind(this),10000);
 }
 
 FieldDayLog.prototype = Object.create(BaseLog.prototype);
@@ -140,17 +144,24 @@ FieldDayLog.prototype.add_to_feed = function(qso) {
     this.update_qso_feed();
 }
 
-/** Update QSO/Hour stat */
-FieldDayLog.prototype.update_qsohr_stat = function() {
+/** Update statistics */
+FieldDayLog.prototype.update_stats = function() {
     var mine_list = [];
     var count = 0;
 
+    for (var i=0;i<this.log.length;i++) {
+        if (((Date.now()-this.log[i].timestamp) < (20*60*1000)) && (this.log[i].contest && this.log[i].contest == "fd") && this.log[i].mine) {
+            count++;
+        }
+    }
+    this.stats.qso_hr_20 = count * 3;
+    count = 0;
     for (var i=0;i<this.log.length;i++) {
         if (((Date.now()-this.log[i].timestamp) < (60*60*1000)) && (this.log[i].contest && this.log[i].contest == "fd") && this.log[i].mine) {
             count++;
         }
     }
-    si("qsohrstat","QSO/hr: "+count);
+    this.stats.qso_hr_60 = count;
 }
 
 /** Onfocus handler for contest exchange fields */
@@ -169,6 +180,22 @@ FieldDayLog.prototype.onfocus_qsoexchange = function() {
         sv("qsoclass",dl[0].class);
         sv("qsosection",dl[0].section);
     }
+}
+
+/** Onclick handler for stats button */
+FieldDayLog.prototype.btn_stats = function() {
+    var cont = "";
+
+    cont+="QSO/hr (60 min): "+this.stats.qso_hr_60+"<br>";
+    cont+="QSO/hr (20 min): "+this.stats.qso_hr_20+"<br>";
+    cont+="<hr><button class=\"btn btn-info\" onclick=\"ZDALOG.btn_stats_close();\">Close</button>";
+    set_overlay(create_panel("Statistics", cont, "stats", {extra_classes: "vcenter centered"}));
+    show_overlay();
+}
+
+/** Onclick handler for stats close button */
+FieldDayLog.prototype.btn_stats_close = function() {
+    hide_overlay();
 }
 
 /** Initialize logging object */
