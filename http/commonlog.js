@@ -501,7 +501,7 @@ BaseLog.prototype.btn_solar = function() {
     var cont = "";
 
     this.current_solar = this.solar_sources.length;
-    cont+="<a href=\"javascript:void(0);\" onclick=\"ZDALOG.solar_advance();\"><img id=\"solarimg\" src=\"http://www.hamqsl.com/solarpic.php\"></a>";
+    cont+="<a href=\"javascript:void(0);\" onclick=\"ZDALOG.solar_advance();\"><img id=\"solarimg\" alt=\"Solar information\" title=\"Click to advance\" src=\"http://www.hamqsl.com/solarpic.php\"></a>";
     cont+="<br>Solar Data Source: <a href=\"http://www.hamqsl.com/solar.html\" id=\"solarlink\" target=\"_blank\">HamQSL.com (N0NBH)</a>";
     cont+="<hr><button class=\"btn btn-info\" onclick=\"ZDALOG.btn_solar_close();\">Close</button>";
     set_overlay(create_panel("Solar Information", cont, "solar", {extra_classes: "vcenter centered"}));
