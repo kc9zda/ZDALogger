@@ -68,6 +68,7 @@ HTTPServer.prototype.getPing = function(req,res) {
 
 	Global.authenticator.ping(s);
 	res.setHeader("Content-Type","text/plain");
+	res.setHeader("Cache-Control","private, max-age=0, no-cache");
 	res.write(Global.conf.get("autoLogoutTime",30).toString());
 	res.end();
 }
@@ -99,6 +100,7 @@ HTTPServer.prototype.postCreate = function(req,res) {
 		var o = Global.authenticator.processCreate(s);
 
 		res.setHeader("Content-Type","text/json");
+		res.setHeader("Cache-Control","private, max-age=0, no-cache");
 		res.write(JSON.stringify(o));
 		res.end();
 	});
@@ -119,6 +121,7 @@ HTTPServer.prototype.postReset = function(req,res) {
 		var o = Global.authenticator.processReset(s);
 
 		res.setHeader("Content-Type","text/json");
+		res.setHeader("Cache-Control","private, max-age=0, no-cache");
 		res.write(JSON.stringify(o));
 		res.end();
 	});	
@@ -139,6 +142,7 @@ HTTPServer.prototype.postLogin = function(req,res) {
 		var o = Global.authenticator.processLogin(s);
 
 		res.setHeader("Content-Type","text/json");
+		res.setHeader("Cache-Control","private, max-age=0, no-cache");
 		res.write(JSON.stringify(o));
 		res.end();
 	});
