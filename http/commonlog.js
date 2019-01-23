@@ -289,7 +289,7 @@ BaseLog.prototype.ws_onmessage = function(m) {
     var o = JSON.parse(m.data);
 
     //console.log(m);
-    this.chat_add_line("WebSocket message: "+o.cmd);
+    //this.chat_add_line("WebSocket message: "+o.cmd);
     switch(o.cmd) {
         case "feed":
             this.add_to_feed(o);
