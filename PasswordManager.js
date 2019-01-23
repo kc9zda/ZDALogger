@@ -1,4 +1,5 @@
 var fs = require("fs");
+var crypto = require("crypto");
 
 /** Initializes the password manager
  * @constructor
@@ -11,7 +12,7 @@ function PasswordManager(pdb) {
     }
     var s = fs.readFileSync(pdb);
     
-    /** @type {Object.<string,{password: string}>} Password database */
+    /** @type {Object.<string,{password: string,salt: string}>} Password database */
     this.db = JSON.parse(s);
     /** @type {string} Password database filename */
     this.filename = pdb;
@@ -30,8 +31,14 @@ PasswordManager.prototype.hasCallsign = function(cs) {
  * @param {string} pw - Password
  * @return {boolean} True if password is correct
  */
-PasswordManager.prototype.checkPassword = function(cs,pw) {
-    return (this.db[cs].password == pw);
+ PasswordManager.prototype.checkPassword = function(cs,pw) {
+    if (!this.db[cs].hash) {
+        this.setPassword(cs,this.db[cs].password);
+        this.db[cs].password = undefined;
+    }
+
+    var ph = this.generateHash(pw, this.db[cs].salt);
+    return (this.db[cs].hash == ph);
 }
 
 /** Sets password for a callsign
@@ -39,7 +46,8 @@ PasswordManager.prototype.checkPassword = function(cs,pw) {
  * @param {string} pw - Password
  */
 PasswordManager.prototype.setPassword = function(cs,pw) {
-    this.db[cs].password = pw;
+    this.db[cs].salt = this.generateSalt(16);
+    this.db[cs].hash = this.generateHash(pw,this.db[cs].salt);
     this.updateDatabase();
 }
 
@@ -54,8 +62,29 @@ PasswordManager.prototype.updateDatabase = function() {
  */
 PasswordManager.prototype.create = function(cs,pw) {
     this.db[cs] = {};
-    this.db[cs].password = pw;
+    this.db[cs].salt = this.generateSalt(16);
+    this.db[cs].hash = this.generateHash(pw,this.db[cs].salt);
     this.updateDatabase();
+}
+
+/** Generate a salt
+ * @param {number} len - Length of salt
+ * @returns {string} Random salt string
+ */
+PasswordManager.prototype.generateSalt = function(len) {
+    return crypto.randomBytes(Math.ceil(len/2)).toString('hex').slice(0,len);
+}
+
+/** Generate a hash 
+ * @param {string} pw - Password to hash
+ * @param {string} salt - Salt
+ * @returns {string} Hash
+ */
+PasswordManager.prototype.generateHash = function(pw, salt) {
+    var hash = crypto.createHmac('sha512',salt);
+    hash.update(pw);
+    var value = hash.digest('hex');
+    return value;
 }
 
 module.exports = PasswordManager;
