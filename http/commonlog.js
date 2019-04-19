@@ -381,7 +381,7 @@ BaseLog.prototype.add_to_feed = function(qso) {
             date = this.uds(d);
             break;
     }
-    s = this.build_tblrow("td",[(qso.mine?"<a href=\"javascript:void(0);\" onclick=\"ZDALOG.btn_delqso("+qso.id+")\">X</a>":""),qso.fmcallsign, qso.fmoperator, qso.band, qso.mode, qso.dxcallsign, time, date, qso.comment]);
+    s = this.build_tblrow("td",[(qso.mine?"<a href=\"javascript:void(0);\" onclick=\"ZDALOG.btn_delqso("+qso.id+")\">X</a> <a href=\"javascript:void(0);\" onclick=\"ZDALOG.btn_editqso("+qso.id+")\">E</a>":""),qso.fmcallsign, qso.fmoperator, qso.band, qso.mode, qso.dxcallsign, time, date, qso.comment]);
     this.qfbody = s + this.qfbody;
     this.update_qso_feed();
 }
@@ -803,4 +803,74 @@ BaseLog.prototype.btn_gopage = function() {
 /** Onclick handler for Navigation window close button */
 BaseLog.prototype.btn_gopage_close = function() {
     hide_overlay();
+}
+
+/** Onclick handler for edit QSO button
+ * @param {number} i - QSO ID
+ */
+BaseLog.prototype.btn_editqso = function(i) {
+    var cont="";
+    var q = this.find_qso(i);
+    var t = ""; // TODO
+    var d = ""; // TODO
+
+    cont+="QSO ID: "+i+"<br>";
+    cont+="Log Station: "+q.fmcallsign+"<br>";
+    cont+="Log Operator: "+q.fmoperator+"<br>";
+    cont+="Freq: <input type=\"text\" id=\"efreq\" value=\""+q.band+"\"><br>"; // TODO: make these select boxes
+    cont+="Mode: <input type=\"text\" id=\"emode\" value=\""+q.mode+"\"><br>"; // same as above
+    cont+="Callsign: <input type=\"text\" id=\"ecall\" value=\""+q.dxcallsign+"\"><br>";
+    //cont+="Time: <input type=\"text\" id=\"etime\" value=\""+t+"\"><br>"; 
+    //cont+="Date: <input type=\"text\" id=\"edate\" value=\""+d+"\"><br>"; // TODO
+    cont+="Comment: <input type=\"text\" id=\"ecomment\" value=\""+q.comment+"\"><br>";
+    cont+="<input type=\"hidden\" id=\"eid\" value=\""+i+"\">";
+    cont+="<hr>";
+    cont+="<button class=\"btn btn-success\" onclick=\"ZDALOG.btn_editqso_save();\">Save</button>";
+    cont+="<button class=\"btn btn-default\" onclick=\"ZDALOG.btn_editqso_cancel();\">Cancel</button>";
+    set_overlay(create_panel("Edit QSO "+i, cont, "editqso", {extra_classes: "vcenter centered"}));
+    show_overlay();
+}
+
+/** Onclick handler for edit QSO save button */
+BaseLog.prototype.btn_editqso_save = function() {
+    var qfields = ["band", "mode", "dxcallsign", "comment"];
+    var o = {};
+    var b = {};
+    var a,id;
+
+    id = gi("eid");
+    a = this.find_qso(id);
+    b.band = gv("efreq");
+    b.mode = gv("emode");
+    b.dxcallsign = gv("ecall");
+    b.comment = this.escapeHTML(gv("ecomment"));
+    o.cmd = "update";
+    o.id = id;
+    o.fields = [];
+    for (var i=0;i<qfields.length;i++) {
+        if (a[qfields[i]] != b[qfields[i]]) {
+            o.fields.push(qfields[i]);
+            o[qfields[i]] = b[qfields[i]];
+        }
+    }
+    console.log(o);
+    if (o.fields.length > 0) {
+        this.ws_send_message(o);
+    }
+    hide_overlay();
+}
+
+/** Onclick handler for edit QSO cancel button */
+BaseLog.prototype.btn_editqso_cancel = function() {
+    hide_overlay();
+}
+
+/** Finds a QSO from its id 
+ * @param {number} id - QSO ID
+ * @returns {object} QSO
+ */
+BaseLog.prototype.find_qso = function(id) {
+    for (var i=0;i<this.log.length;i++) {
+        if (this.log[i].id == id) return this.log[i];
+    }
 }

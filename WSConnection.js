@@ -54,6 +54,9 @@ WSConnection.prototype.onmessage = function(msg) {
         case "settings":
             this.msg_settings(o);
             break;
+        case "update":
+            this.update(o);
+            break;
         default:
             console.log("unknown ws cmd: "+o.cmd);
             break;
@@ -266,6 +269,16 @@ WSConnection.prototype.sendSettings = function(ses) {
     o.mode = mode;
     o.band = band;
     this.send_message(o);
+}
+
+/** Handles request to update a QSO
+ * @param {object} obj - Received message
+ */
+WSConnection.prototype.update = function(obj) {
+    var log = Global.logger.getLogForSession(this.session);
+
+    log.updateQSO(obj);
+    this.sendLog(this.session);
 }
 
 module.exports = WSConnection;

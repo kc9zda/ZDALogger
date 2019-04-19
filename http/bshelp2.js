@@ -38,6 +38,14 @@ function gv(i) {
     return ge(i).value;
 }
 
+/** Gets integer value of element
+ * @param {string} i - Element ID
+ * @return {number} Element integer value
+ */
+function gi(i) {
+    return parseInt(gv(i));
+}
+
 /** Focuses element
  * @param {string} i - Element ID
  */

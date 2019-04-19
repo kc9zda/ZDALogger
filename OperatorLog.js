@@ -74,4 +74,25 @@ OperatorLog.prototype.deleteQSO = function(id) {
     fs.writeFileSync(this.logFilename, JSON.stringify(this.log));
 }
 
+/** Updates existing QSO
+ * @param {object} obj - Parameters
+ * @param {number} obj.id - QSO ID to edit
+ * @param {string[]} obj.fields - QSO fields to update
+ */
+OperatorLog.prototype.updateQSO = function(obj) {
+    var idx = -1;
+
+    for (var i=0;i<this.log.length;i++) {
+        if (this.log[i].id == obj.id) {
+            idx = i;
+            break;
+        }
+    }
+    if (idx>=0) {
+        for (var i=0;i<obj.fields.length;i++) {
+            this.log[idx][obj.fields[i]] = obj[obj.fields[i]];
+        }
+    }
+}
+
 module.exports = OperatorLog;
