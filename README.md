@@ -17,6 +17,5 @@ ZDALogger is a logging web app for amateur radio operators. The server runs on N
 
 ## How to run
 
-The only prerequisite for this program is having a fairly recent version of Node.JS installed.
-
-Simply download the code from Github and `cd` to the directory. Then run `node index.js` and the server will run. The default port is 8627.
+Windows users: Download/clone the code from Github and open the zdalog.bat file.
+Linux users: Download/clone the code from Github and open the zdalog.sh file. A recent version of Node.js is required.
