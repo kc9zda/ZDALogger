@@ -13,7 +13,8 @@ function ContestManager() {
  * @returns {object} QSO object with fields added
  */
 ContestManager.prototype.addContestFields = function(qso,obj,contest) {
-    return this.contests[contest].addFields(qso,obj);
+    if (contest) return this.contests[contest].addFields(qso,obj);
+    else return qso;
 }
 
 /** Adds contest to the list
