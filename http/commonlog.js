@@ -355,6 +355,7 @@ BaseLog.prototype.ws_onerror = function() {
  */
 BaseLog.prototype.init_log = function(obj) {
     this.qfbody = "";
+    this.log = [];
     for (var i=0;i<obj.log.length;i++) {
         obj.log[i].mine = true;
         this.add_to_feed(obj.log[i]);
