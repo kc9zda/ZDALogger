@@ -818,8 +818,8 @@ BaseLog.prototype.btn_editqso = function(i) {
     cont+="QSO ID: "+i+"<br>";
     cont+="Log Station: "+q.fmcallsign+"<br>";
     cont+="Log Operator: "+q.fmoperator+"<br>";
-    cont+="Freq: <input type=\"text\" id=\"efreq\" value=\""+q.band+"\"><br>"; // TODO: make these select boxes
-    cont+="Mode: <input type=\"text\" id=\"emode\" value=\""+q.mode+"\"><br>"; // same as above
+    cont+="Band: "+this.make_band_dropdown("efreq")+"<br>";
+    cont+="Mode: "+this.make_mode_dropdown("emode")+"<br>";
     cont+="Callsign: <input type=\"text\" id=\"ecall\" value=\""+q.dxcallsign+"\"><br>";
     //cont+="Time: <input type=\"text\" id=\"etime\" value=\""+t+"\"><br>"; 
     //cont+="Date: <input type=\"text\" id=\"edate\" value=\""+d+"\"><br>"; // TODO
@@ -829,6 +829,8 @@ BaseLog.prototype.btn_editqso = function(i) {
     cont+="<button class=\"btn btn-success\" onclick=\"ZDALOG.btn_editqso_save();\">Save</button>";
     cont+="<button class=\"btn btn-default\" onclick=\"ZDALOG.btn_editqso_cancel();\">Cancel</button>";
     set_overlay(create_panel("Edit QSO "+i, cont, "editqso", {extra_classes: "vcenter centered"}));
+    ge("efreq").selectedIndex = this.find_band_index(q.band);
+    ge("emode").selectedIndex = this.find_mode_index(q.mode);
     show_overlay();
 }
 
@@ -874,4 +876,60 @@ BaseLog.prototype.find_qso = function(id) {
     for (var i=0;i<this.log.length;i++) {
         if (this.log[i].id == id) return this.log[i];
     }
+}
+
+/** Creates an HTML dropdown with a list of bands
+ * @param {string} id - HTML ID for element
+ * @return {string} HTML code for element
+ */
+BaseLog.prototype.make_band_dropdown = function(id) {
+    var s = "";
+
+    s = "<select id=\""+id+"\">";
+    for (var i=0;i<this.bands.length;i++) {
+        s+="<option>";
+        s+=this.bands[i];
+        s+="</option>";
+    }
+    s+= "</select>";
+    return s;
+}
+
+/** Creates an HTML dropdown with a list of modes
+ * @param {string} id - HTML ID for element
+ * @return {string} HTML code for element
+ */
+BaseLog.prototype.make_mode_dropdown = function(id) {
+    var s = "";
+
+    s = "<select id=\""+id+"\">";
+    for (var i=0;i<this.modes.length;i++) {
+        s+="<option>";
+        s+=this.modes[i];
+        s+="</option>";
+    }
+    s+= "</select>";
+    return s;
+}
+
+/** Finds the index in bands array for a particular band
+ * @param {string} b - Band name
+ * @return {number} Index into band array for the specified band
+ */
+BaseLog.prototype.find_band_index = function(b) {
+    for (var i=0;i<this.bands.length;i++) {
+        if (this.bands[i]==b) return i;
+    }
+    return -1;
+}
+
+/** Finds the index in modes array for a particular mode
+ * @param {string} m - Mode name
+ * @return {number} Index into mode array for the specified mode
+ */
+BaseLog.prototype.find_mode_index = function(m) {
+    for (var i=0;i<this.modes.length;i++) {
+        if (this.modes[i]==m) return i;
+    }
+    return -1;
 }
