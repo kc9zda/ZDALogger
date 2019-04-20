@@ -40,6 +40,8 @@ function BaseLog() {
     this.modes = ["CW","PHONE","IMAGE","DATA","AM","C4FM","DIGITALVOICE","DSTAR","FM","SSB","ATV","FAX","SSTV","AMTOR","ARDOP","CHIP","CLOVER","CONTESTI","DOMINO","FSK31","FSK441","FT8","GTOR","HELL","HFSK","ISCAT","JT4","JT65","JT6M","JT9","MFSK16","MFSK8","MINIRTTY","MSK144","MT63","OLIVIA","OPERA","PACKET","PAX","PSK10","PSK125","PSK2K","PSK31","PSK63","PSK63F","PSKAM","PSKFEC31","Q15","QRA64","ROS","RTTY","RTTYM","T10","THOR","THROB","VOI","WINMOR","WSPR"];
     /** @type {[]} Entire log */
     this.log = [];
+    /** @type {{field: string; name: string; type: string;}[]} List of contest fields */
+    this.contest_fields = [];
 
     this.init_logout_link();
     this.init_cty_dat();
@@ -847,6 +849,8 @@ BaseLog.prototype.btn_editqso = function(i) {
     cont+="QSO ID: "+i+"<br>";
     cont+="Log Station: "+q.fmcallsign+"<br>";
     cont+="Log Operator: "+q.fmoperator+"<br>";
+    cont+="<div class=\"aligtop\" style=\"margin-top: 8px;\">";
+    cont+="<div class=\"aligtop"+((this.contest_fields.length>0 && q.contest==this.contest_id)?" normal-edit":"")+"\">";
     cont+="Band: "+this.make_band_dropdown("efreq")+"<br>";
     cont+="Mode: "+this.make_mode_dropdown("emode")+"<br>";
     cont+="Callsign: <input type=\"text\" id=\"ecall\" value=\""+q.dxcallsign+"\"><br>";
@@ -854,13 +858,36 @@ BaseLog.prototype.btn_editqso = function(i) {
     cont+="Date: <input type=\"date\" id=\"edate\" value=\""+d+"\"><br>";
     cont+="Comment: <input type=\"text\" id=\"ecomment\" value=\""+q.comment+"\"><br>";
     cont+="<input type=\"hidden\" id=\"eid\" value=\""+i+"\">";
-    cont+="<hr>";
+    cont+="</div>";
+    if (this.contest_fields.length>0 && q.contest==this.contest_id) {
+        cont+="<div class=\"aligtop contest-edit\">";
+        for (var i2=0;i2<this.contest_fields.length;i2++) {
+            cont+=this.encode_contest_field_editor(i2,q);
+        }
+        cont+="</div>";
+    }
+    cont+="</div><hr>";
     cont+="<button class=\"btn btn-success\" onclick=\"ZDALOG.btn_editqso_save();\">Save</button>";
     cont+="<button class=\"btn btn-default\" onclick=\"ZDALOG.btn_editqso_cancel();\">Cancel</button>";
     set_overlay(create_panel("Edit QSO "+i, cont, "editqso", {extra_classes: "vcenter centered"}));
     ge("efreq").selectedIndex = this.find_band_index(q.band);
     ge("emode").selectedIndex = this.find_mode_index(q.mode);
     show_overlay();
+}
+
+BaseLog.prototype.encode_contest_field_editor = function(i,q) {
+    var s = "";
+    var f = this.contest_fields[i];
+
+    switch(f.type) {
+        case "text":
+            s+=f.name+": <input type=\"text\" id=\"ex"+f.field+"\" value=\""+q[f.field]+"\"><br>"
+            break;
+        default:
+            s+="unknown type <br>";
+            break;
+    }
+    return s;
 }
 
 /** Onclick handler for edit QSO save button */
@@ -870,6 +897,9 @@ BaseLog.prototype.btn_editqso_save = function() {
     var b = {};
     var a,id;
 
+    for (var i=0;i<this.contest_fields.length;i++) {
+        qfields.push(this.contest_fields[i].field);
+    }
     id = gi("eid");
     a = this.find_qso(id);
     b.band = gv("efreq");
@@ -877,6 +907,15 @@ BaseLog.prototype.btn_editqso_save = function() {
     b.dxcallsign = gv("ecall");
     b.comment = this.escapeHTML(gv("ecomment"));
     b.timestamp = this.date_time_to_timestamp(gv("edate"),gv("etime"));
+    for (var i=0;i<this.contest_fields.length;i++) {
+        switch(this.contest_fields[i].type) {
+            case "text":
+                b[this.contest_fields[i].field] = gv("ex"+this.contest_fields[i].field);
+                break;
+            default:
+                break;
+        }
+    }
     o.cmd = "update";
     o.id = id;
     o.fields = [];
@@ -1015,4 +1054,15 @@ BaseLog.prototype.date_time_to_timestamp = function(d,t) {
     }
     console.log(o);
     return o.getTime();
+}
+
+/** Adds contest fields
+ * @param {string} field - Field ID
+ * @param {string} name - Field name
+ * @param {string} type - Field type (text)
+ */
+BaseLog.prototype.addContestField = function(field,name,type) {
+    var o = {field,name,type};
+
+    this.contest_fields.push(o);
 }

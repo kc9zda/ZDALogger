@@ -11,7 +11,10 @@ function FieldDayLog() {
         dig_count: 0,
         points: 0,
     };
+    this.contest_id = "fd";
     this.dxcall_changed = false;
+    this.addContestField("class","Class","text");
+    this.addContestField("section","Section","text");
     this.removeBands(["60m","30m","17m","12m"]);
     this.groupnames = ["0","1","2","3","4","5","6","7","8","9","Canada","DX"];
     this.sections = [];
@@ -163,7 +166,7 @@ FieldDayLog.prototype.add_to_feed = function(qso) {
             date = this.uds(d);
             break;
     }
-    s = this.build_tblrow("td",[(qso.mine?"<a href=\"javascript:void(0);\" onclick=\"ZDALOG.btn_delqso("+qso.id+")\">X</a>":""),qso.fmcallsign, qso.fmoperator, qso.band, qso.mode, qso.dxcallsign, time, date, (qso.class||" "), (qso.section||" ")]);
+    s = this.build_tblrow("td",[(qso.mine?"<a href=\"javascript:void(0);\" onclick=\"ZDALOG.btn_delqso("+qso.id+")\">X</a> <a href=\"javascript:void(0);\" onclick=\"ZDALOG.btn_editqso("+qso.id+")\">E</a>":""),qso.fmcallsign, qso.fmoperator, qso.band, qso.mode, qso.dxcallsign, time, date, (qso.class||" "), (qso.section||" ")]);
     this.qfbody = s + this.qfbody;
     this.update_qso_feed();
 }

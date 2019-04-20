@@ -23,6 +23,20 @@ html, body {
     display: block;
 }
 
+.aligtop {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.normal-edit {
+    padding-right: 5px;
+    border-right: 1px solid #555;
+}
+
+.contest-edit {
+    margin-left: 10px;
+}
+
 #overlay {
     visibility: hidden;
     position: absolute;
