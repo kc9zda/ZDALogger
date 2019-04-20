@@ -812,17 +812,28 @@ BaseLog.prototype.btn_gopage_close = function() {
 BaseLog.prototype.btn_editqso = function(i) {
     var cont="";
     var q = this.find_qso(i);
-    var t = ""; // TODO
-    var d = ""; // TODO
+    var t = this.log_time_str(q.timestamp);
+    var d2 = new Date(q.timestamp);
+    var d = "";
 
+    switch(this.settings.logtz) {
+        case 0:
+            d = d2.getUTCFullYear()+"-"+(("0"+(d2.getUTCMonth()+1)).slice(-2))+"-"+(("0"+d2.getUTCDate()).slice(-2));
+            break;
+        case 1:
+            d = d2.getFullYear()+"-"+(("0"+(d2.getMonth()+1)).slice(-2))+"-"+(("0"+d2.getDate()).slice(-2));
+            break;
+        default:
+            break;
+    }
     cont+="QSO ID: "+i+"<br>";
     cont+="Log Station: "+q.fmcallsign+"<br>";
     cont+="Log Operator: "+q.fmoperator+"<br>";
     cont+="Band: "+this.make_band_dropdown("efreq")+"<br>";
     cont+="Mode: "+this.make_mode_dropdown("emode")+"<br>";
     cont+="Callsign: <input type=\"text\" id=\"ecall\" value=\""+q.dxcallsign+"\"><br>";
-    //cont+="Time: <input type=\"text\" id=\"etime\" value=\""+t+"\"><br>"; 
-    //cont+="Date: <input type=\"text\" id=\"edate\" value=\""+d+"\"><br>"; // TODO
+    cont+="Time: <input type=\"time\" id=\"etime\" value=\""+t+"\"><br>"; 
+    cont+="Date: <input type=\"date\" id=\"edate\" value=\""+d+"\"><br>";
     cont+="Comment: <input type=\"text\" id=\"ecomment\" value=\""+q.comment+"\"><br>";
     cont+="<input type=\"hidden\" id=\"eid\" value=\""+i+"\">";
     cont+="<hr>";
@@ -836,7 +847,7 @@ BaseLog.prototype.btn_editqso = function(i) {
 
 /** Onclick handler for edit QSO save button */
 BaseLog.prototype.btn_editqso_save = function() {
-    var qfields = ["band", "mode", "dxcallsign", "comment"];
+    var qfields = ["band", "mode", "dxcallsign", "comment", "timestamp"];
     var o = {};
     var b = {};
     var a,id;
@@ -847,6 +858,7 @@ BaseLog.prototype.btn_editqso_save = function() {
     b.mode = gv("emode");
     b.dxcallsign = gv("ecall");
     b.comment = this.escapeHTML(gv("ecomment"));
+    b.timestamp = this.date_time_to_timestamp(gv("edate"),gv("etime"));
     o.cmd = "update";
     o.id = id;
     o.fields = [];
@@ -932,4 +944,57 @@ BaseLog.prototype.find_mode_index = function(m) {
         if (this.modes[i]==m) return i;
     }
     return -1;
+}
+
+/** Returns a time string
+ * @param {number} t - Unix Timestamp
+ * @return {string} String in user's selected time zone
+ */
+BaseLog.prototype.log_time_str = function(t) {
+    t = new Date(t);
+    switch (this.settings.logtz) {
+        case 0:
+            return this.uts(t);
+        case 1:
+            return this.lts(t);
+        default:
+            return "";
+    }
+}
+
+/** Returns a Unix timestamp from the supplied date and time using the timezone specified by settings.logtz. Designed for use with date and time HTML input elements\
+ * @param {string} d - Date string yyyy-mm-dd
+ * @param {string} t - Time string hh:mm:ss
+ * @return {number} Unix timestamp
+ */
+BaseLog.prototype.date_time_to_timestamp = function(d,t) {
+    var da,ta,o;
+
+    console.log(d);
+    console.log(t);
+    da = d.split("-");
+    ta = t.split(":");
+    o = new Date();
+    switch(this.settings.logtz) {
+        case 0:
+            o.setUTCFullYear(parseInt(da[0]));
+            o.setUTCMonth(parseInt(da[1])-1);
+            o.setUTCDate(parseInt(da[2]));
+            o.setUTCHours(parseInt(ta[0]));
+            o.setUTCMinutes(parseInt(ta[1]));
+            o.setUTCSeconds(parseInt(ta[2]));
+            break;
+        case 1:
+            o.setFullYear(parseInt(da[0]));
+            o.setMonth(parseInt(da[1])-1);
+            o.setDate(parseInt(da[2]));
+            o.setHours(parseInt(ta[0]));
+            o.setMinutes(parseInt(ta[1]));
+            o.setSeconds(parseInt(ta[2]));
+            break;
+        default:
+            break;
+    }
+    console.log(o);
+    return o.getTime();
 }
