@@ -529,11 +529,29 @@ BaseLog.prototype.btn_solar_close = function() {
  * @param {number} id - QSO id
  */
 BaseLog.prototype.btn_delqso = function(id) {
+    var s = "";
+
+    s+="Are you sure you want to delete this entry?<hr>";
+    s+="<button class=\"btn btn-default\" style=\"float: left;\" onclick=\"ZDALOG.btn_delqso_cancel();\">Cancel</button><button class=\"btn btn-danger\" style=\"float: right;\" onclick=\"ZDALOG.btn_delqso_confirm("+id+")\">Confirm</button>";
+    set_overlay(create_panel("Delete entry", s, "del", {extra_classes: "vcenter centered"}));
+    show_overlay();
+}
+
+/** onclick handler for confirm delete QSO button
+ * @param {number} id - QSO id
+ */
+BaseLog.prototype.btn_delqso_confirm = function(id) {
     var o = {};
 
     o.cmd = "delete";
     o.id = id;
     this.ws_send_message(o);
+    hide_overlay();
+}
+
+/** onclick handler for cancel delete QSO button */
+BaseLog.prototype.btn_delqso_cancel = function() {
+    hide_overlay();
 }
 
 /** onchange handler for the QSO callsign */
