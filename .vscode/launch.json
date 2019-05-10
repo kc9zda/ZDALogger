@@ -7,8 +7,14 @@
         {
             "type": "node",
             "request": "launch",
-            //"runtimeExecutable": "../node-v8.12.0-win-x64/node.exe",
-            "name": "Launch Program",
+            "runtimeExecutable": "${workspaceFolder}/node.exe",
+            "name": "Launch Program (Local node, Windows only)",
+            "program": "${workspaceFolder}/index.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program (System NodeJS)",
             "program": "${workspaceFolder}/index.js"
         }
     ]
