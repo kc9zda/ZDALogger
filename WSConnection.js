@@ -178,7 +178,8 @@ WSConnection.prototype.chat = function(obj) {
     var o2 = {};
 
     if (this.session.indexOf("DEFAULT")>=0 || this.session.indexOf("INVALID")>=0) return;
-    o2.message = "<b>"+this.operator+"</b>&nbsp;"+obj.message;
+    o2.message = obj.message;
+    o2.sender = this.operator;
     this.manager.broadcastChat(this.callsign, o2);
 }
 

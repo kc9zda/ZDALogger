@@ -300,7 +300,7 @@ BaseLog.prototype.ws_onmessage = function(m) {
             this.init_log(o);
             break;
         case "chat":
-            this.chat_add_line(o.message);
+            this.chat_new_message(o);
             break;
         case "online":
             this.update_users_online(o.online);
@@ -1065,4 +1065,16 @@ BaseLog.prototype.addContestField = function(field,name,type) {
     var o = {field,name,type};
 
     this.contest_fields.push(o);
+}
+
+/** Handles new chat message from server
+ * @param {object} pkt - Packet
+ */
+BaseLog.prototype.chat_new_message = function(pkt) {
+    var s = pkt.message;
+
+    if (pkt.sender) {
+        s = "<b>"+pkt.sender+"</b>&nbsp;" + s;
+    }
+    this.chat_add_line(s);
 }
